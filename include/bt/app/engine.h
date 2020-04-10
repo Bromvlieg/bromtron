@@ -12,6 +12,7 @@ namespace bt {
 		static Game& game();
 		static Api& api();
 		static World& world();
+		static Camera& cam();
 		Game& getGame();
 	};
 }

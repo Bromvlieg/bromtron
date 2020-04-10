@@ -155,24 +155,4 @@ namespace bt {
 		for (auto& obj : tmpStars) obj->draw(stencil);
 		for (auto& obj : tmpCarriers) obj->draw(stencil);
 	}
-
-	mainframe::math::Vector2 World::worldToScreen(const mainframe::math::Vector2& worldpos) {
-		return (worldpos * scale) * zoom + center;
-	}
-
-	mainframe::math::Vector2 World::screenToWorld(const mainframe::math::Vector2& screenpos) {
-		return ((screenpos - center) / zoom) / scale;
-	}
-
-	mainframe::math::AABB World::worldToScreen(const mainframe::math::AABB& worldpos) {
-		auto pos = worldToScreen(mainframe::math::Vector2(worldpos.x, worldpos.y));
-		return {pos.x, pos.y, worldpos.w, worldpos.h};
-		//return {pos.x, pos.y, worldpos.w * zoom.x, worldpos.h * zoom.y};
-	}
-
-	mainframe::math::AABB World::screenToWorld(const mainframe::math::AABB& screenpos) {
-		auto pos = screenToWorld(mainframe::math::Vector2(screenpos.x, screenpos.y));
-		return {pos.x, pos.y, screenpos.w, screenpos.h};
-		//return {pos.x, pos.y, screenpos.w / zoom.x, screenpos.h / zoom.y};
-	}
 }

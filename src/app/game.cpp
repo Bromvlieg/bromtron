@@ -48,29 +48,7 @@ namespace bt {
 		stencil.setWindowSize(window->getSize());
 		scene->setWindow(*window);
 
-		scene->onMouseScroll += [this](const mainframe::math::Vector2i& mousePos, const mainframe::math::Vector2i& offset) {
-			auto oldworldpos = world.screenToWorld(mousePos);
-
-			world.zoom += mainframe::math::Vector2(offset.y) / 200;
-			if (world.zoom.x > 3) world.zoom = 3;
-			if (world.zoom.x < 0.2f) world.zoom = 0.2f;
-
-			auto newscreenpos = world.worldToScreen(oldworldpos);
-
-			world.center += mousePos - newscreenpos;
-		};
-
-		scene->onMousePress += [this](const mainframe::math::Vector2i& mousePos, unsigned int button, ModifierKey mods, bool pressed) {
-			movingMap = pressed;
-			oldMovePos = mousePos;
-		};
-
-		scene->onMouseMove += [this](const mainframe::math::Vector2i& mousePos) {
-			if (!movingMap) return;
-
-			world.center += mousePos - oldMovePos;
-			oldMovePos = mousePos;
-		};
+		camera.hook(*scene);
 	}
 
 	void Game::draw() {

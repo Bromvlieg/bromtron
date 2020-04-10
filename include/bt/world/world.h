@@ -27,10 +27,6 @@ namespace bt {
 		void syncCarriers(const std::map<std::string, ApiCarrier> carrierst);
 
 	public:
-		mainframe::math::Vector2 center;
-		mainframe::math::Vector2 scale {200, 200};
-		mainframe::math::Vector2 zoom {1, 1};
-
 		std::shared_ptr<Star> getStar(size_t uid);
 		std::shared_ptr<Player> getPlayer(size_t uid);
 		std::shared_ptr<Carrier> getCarrier(size_t uid);
@@ -39,10 +35,5 @@ namespace bt {
 
 		void update();
 		void draw(mainframe::render::Stencil& stencil);
-
-		mainframe::math::Vector2 worldToScreen(const mainframe::math::Vector2& worldpos);
-		mainframe::math::Vector2 screenToWorld(const mainframe::math::Vector2& screenpos);
-		mainframe::math::AABB worldToScreen(const mainframe::math::AABB& worldpos);
-		mainframe::math::AABB screenToWorld(const mainframe::math::AABB& screenpos);
 	};
 }

@@ -6,6 +6,7 @@
 #include <mainframe/render/stencil.h>
 #include <mainframe/ui/scene.h>
 #include <bt/api/api.h>
+#include <bt/world/camera.h>
 #include <bt/world/world.h>
 
 namespace bt {
@@ -20,15 +21,13 @@ namespace bt {
 		std::shared_ptr<Font> fontSmall = std::make_shared<Font>("fonts/VeraMono.ttf", 13.0f);
 		Texture tex = Texture("textures/test.png");
 
-		bool movingMap = false;
-		mainframe::math::Vector2i oldMovePos;
-
 	public:
 		std::shared_ptr<Scene> scene = Scene::create();
 		std::unique_ptr<Window> window;
 		Stencil stencil;
 		Api api;
 		World world;
+		Camera camera;
 		ApiLocalPlayer localplayer;
 
 		virtual void init() override;

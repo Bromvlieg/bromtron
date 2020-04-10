@@ -1,6 +1,7 @@
 #include <bt/world/star.h>
 #include <bt/world/world.h>
 #include <bt/misc/content.h>
+#include <bt/app/engine.h>
 
 namespace bt {
 	Star::Star(World& w) : world(w) {
@@ -20,7 +21,8 @@ namespace bt {
 	}
 
 	void Star::draw(mainframe::render::Stencil& stencil) {
-		auto spos = world.worldToScreen(location);
+		auto& cam = BromTron::cam();
+		auto spos = cam.worldToScreen(location);
 		mainframe::math::Vector2 ssize = {64, 64};
 
 		auto tex = Content::getTexture("stars");
