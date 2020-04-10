@@ -12,6 +12,7 @@
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 #include <bt/api/class/playerloggedin.h>
+#include <bt/api/class/map.h>
 
 namespace bt {
 	namespace downloader_funcs {
@@ -69,5 +70,8 @@ namespace bt {
 
 		using CallbackInitPlayer = mainframe::utils::EventNamed<ApiLocalPlayer, const std::string&>::Func;
 		std::shared_ptr<ApiHandle> initPlayer(CallbackInitPlayer callback);
+
+		using CallbackMap = mainframe::utils::EventNamed<ApiMap, const std::string&>::Func;
+		std::shared_ptr<ApiHandle> getMap(const std::string& mapId, CallbackMap callback);
 	};
 }

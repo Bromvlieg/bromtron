@@ -125,7 +125,16 @@ namespace bt {
 				continue;
 			}
 
-			std::string command = ret[0];
+			std::string command;
+			nlohmann::json value;
+			if (ret.is_array()) {
+				command = ret[0];
+				value = ret[1];
+			} else {
+				command = ret["event"];
+				value = ret["report"];
+			}
+
 			if (command == "meta:login_success") {
 				if (retheaders.find("Set-Cookie") != retheaders.end()) {
 					setCookie(retheaders["Set-Cookie"]);
@@ -137,7 +146,7 @@ namespace bt {
 			if (inst == nullptr) continue;
 
 			printf("calling DO api, SUCCESS: %s\n", path.c_str());
-			inst->ptr->call(command != "meta:error", ret.size() > 0 ? ret[1] : nlohmann::json());
+			inst->ptr->call(command != "meta:error", value);
 		}
 	}
 
