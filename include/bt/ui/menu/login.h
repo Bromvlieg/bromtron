@@ -12,7 +12,9 @@ namespace bt {
 		mainframe::math::Vector2i textSize;
 		std::string eventName;
 
-		std::shared_ptr<Api::ApiHandle> ApiCall;
+		std::shared_ptr<Api::ApiHandle> apiCall;
+
+		void initPlayer();
 
 	public:
 		virtual void init() override;

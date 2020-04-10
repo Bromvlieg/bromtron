@@ -12,7 +12,7 @@ namespace bt {
 		from_json_research(j, obj.banking, "Banking");
 		from_json_research(j, obj.range, "Hyperspace");
 		from_json_research(j, obj.scanning, "Scanning");
-		from_json_research(j, obj.experimentation, "Banking");
+		from_json_research(j, obj.experimentation, "Experimentation");
 		from_json_research(j, obj.terraforming, "Terraforming");
 		from_json_research(j, obj.manufacturing, "Manufacturing");
 	}
