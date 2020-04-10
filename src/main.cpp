@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[]) {
 	auto w = std::make_unique<mainframe::game::Window>();
-	if (!w->create(1024, 1024, "Bromtron")) {
+	if (!w->create(1920, 1080, "Bromtron")) {
 		fmt::print("Failed to create window\n");
 		return -1;
 	}

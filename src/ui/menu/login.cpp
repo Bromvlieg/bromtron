@@ -24,6 +24,26 @@ namespace bt {
 		textSize = font->getStringSize(text);
 
 		boxSize = {450, 300};
+
+		initPlayer();
+	}
+
+	void MenuLogin::initPlayer() {
+		auto& api = BromTron::api();
+
+		apiCall = api.initPlayer([this](ApiLocalPlayer ply, const std::string& errMsg) {
+			if (ply.id.empty()) {
+				printf("init failed '%s'\n", errMsg.c_str());
+				return;
+			}
+
+			invoke([this, ply]() {
+				BromTron::game().localplayer = ply;
+				remove();
+
+				BromTron::world().loadGame(ply.gamesOpen[0]);
+			});
+		});
 	}
 
 	void MenuLogin::recreateElements() {
@@ -34,7 +54,7 @@ namespace bt {
 		auto txtUser = createChild<Textbox>();
 		auto& txtUsersize = txtUser->getSize();
 		txtUser->setFont(font);
-		txtUser->setText("");
+		txtUser->setText("bromvlieg");
 		txtUser->resizeToContents();
 		txtUser->setSize({300, 30});
 		txtUser->setPos(oursize / 2 + Vector2i(-txtUsersize.x / 2, 0));
@@ -58,21 +78,13 @@ namespace bt {
 
 		btnmanual->onClick += [this, txtUser, txtPass]() {
 			auto& api = BromTron::api();
-			ApiCall = api.login(txtUser->getText(), txtPass->getText(), [this, &api](bool success, const std::string& errMsg) {
+			apiCall = api.login(txtUser->getText(), txtPass->getText(), [this, &api](bool success, const std::string& errMsg) {
 				if (!success) {
 					printf("login failed '%s'\n", errMsg.c_str());
 					return;
 				}
 
-				ApiCall = api.initPlayer([this, &api](ApiLocalPlayer ply, const std::string& errMsg) {
-					if (ply.id.empty()) {
-						printf("login failed '%s'\n", errMsg.c_str());
-						return;
-					}
-
-					BromTron::game().localplayer = ply;
-					//BromTron::world().loadGame(ply.gamesOpen[0]);
-				});
+				initPlayer();
 			});
 		};
 

@@ -12,7 +12,11 @@ namespace bt {
 	}
 
 	Api& BromTron::api() {
-		return engine().getGame().api;
+		return game().api;
+	}
+
+	World& BromTron::world() {
+		return game().world;
 	}
 
 	Game& BromTron::getGame() {

@@ -17,9 +17,19 @@ namespace bt {
 	void Game::init() {
 		Translate::load("data/translations.json");
 
-		Content::loadImage("test");
+		Content::loadImage("fleet_range");
+		Content::loadImage("fleet_waypoint");
+		Content::loadImage("fleet_waypoint_next");
+		Content::loadImage("halo");
+		Content::loadImage("halo2");
+		Content::loadImage("owner_rings_48");
+		Content::loadImage("stars");
+		Content::loadImage("scanning_range");
+		Content::loadImage("selection_ring");
+
 		Content::loadFont("VeraMono", "text");
 		Content::loadFont("VeraMono", "textSmall");
+
 		Content::loadFont("fa-solid-900", "fa-solid");
 		Content::loadFont("fa-regular-400", "fa-regular");
 		Content::loadFont("fa-brands-400", "fa-brands");
@@ -30,36 +40,6 @@ namespace bt {
 		MenuBase::initMenus(*this);
 		MenuBase::switchMenu(Menus::login);
 
-		/*
-		auto frame = scene->createChild<Frame>();
-		frame->setSize(window->getSize() / 2);
-		frame->setPos(window->getSize() / 2 - frame->getSize() / 2);
-		frame->setFont(fontSmall);
-		frame->setText("Test frame");
-		frame->resizeToContents();
-
-		auto lbl = frame->createChild<Label>();
-		lbl->setPos({20, 20});
-		lbl->setFont(font);
-		lbl->setText("Some basic menu elements");
-		lbl->resizeToContents();
-
-		auto btn = frame->createChild<Button>();
-		btn->setPos(lbl->getPos() + Vector2i(0, lbl->getSize().y + 5));
-		btn->setFont(font);
-		btn->setText("Press me!");
-		btn->resizeToContents();
-		btn->setSize(btn->getSize() * 2);
-		btn->onClick += [btn]() {
-			btn->setText(":0");
-			btn->setBorderColor(Colors::Red);
-		};
-
-		auto img = frame->createChild<Image>();
-		img->setPos(btn->getPos() + Vector2i(0, btn->getSize().y + 5));
-		img->setSize(tex.getSize());
-		img->setImage(tex);
-		*/
 	}
 
 	void bt::Game::setWindow(std::unique_ptr<Window>& w) {
@@ -67,6 +47,30 @@ namespace bt {
 
 		stencil.setWindowSize(window->getSize());
 		scene->setWindow(*window);
+
+		scene->onMouseScroll += [this](const mainframe::math::Vector2i& mousePos, const mainframe::math::Vector2i& offset) {
+			auto oldworldpos = world.screenToWorld(mousePos);
+
+			world.zoom += mainframe::math::Vector2(offset.y) / 200;
+			if (world.zoom.x > 3) world.zoom = 3;
+			if (world.zoom.x < 0.2f) world.zoom = 0.2f;
+
+			auto newscreenpos = world.worldToScreen(oldworldpos);
+
+			world.center += mousePos - newscreenpos;
+		};
+
+		scene->onMousePress += [this](const mainframe::math::Vector2i& mousePos, unsigned int button, ModifierKey mods, bool pressed) {
+			movingMap = pressed;
+			oldMovePos = mousePos;
+		};
+
+		scene->onMouseMove += [this](const mainframe::math::Vector2i& mousePos) {
+			if (!movingMap) return;
+
+			world.center += mousePos - oldMovePos;
+			oldMovePos = mousePos;
+		};
 	}
 
 	void Game::draw() {
@@ -83,7 +87,9 @@ namespace bt {
 				0, 1, 2,
 				1, 2, 3
 			}
-							});
+		});
+
+		world.draw(stencil);
 
 		scene->draw(stencil);
 		window->swapBuffer();
@@ -101,6 +107,7 @@ namespace bt {
 
 	void Game::update() {
 		scene->update();
+		world.update();
 
 		if (window->getShouldClose()) {
 			quit();
