@@ -54,7 +54,7 @@ namespace bt {
 		auto txtUser = createChild<Textbox>();
 		auto& txtUsersize = txtUser->getSize();
 		txtUser->setFont(font);
-		txtUser->setText("bromvlieg");
+		txtUser->setText("");
 		txtUser->resizeToContents();
 		txtUser->setSize({300, 30});
 		txtUser->setPos(oursize / 2 + Vector2i(-txtUsersize.x / 2, 0));
