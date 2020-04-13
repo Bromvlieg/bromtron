@@ -118,21 +118,109 @@ namespace bt {
 		return {};
 	}
 
+	struct calcScore {
+		size_t tech = 0;
+		size_t power = 0;
+		size_t eco = 0;
+		float total = 0;
+		std::string name;
+	};
+
 	void World::loadGame(const ApiPlayerGame& lobby) {
 		auto& api = BromTron::api();
 
 		apiCallLoadGame = api.getMap(lobby.id, [this](ApiMap& map, const std::string& errMsg) {
-			syncPlayers(map.players);
-			syncStars(map.stars);
-			syncCarriers(map.carriers);
+			BromTron::game().scene->invoke([this, map, errMsg]() {
+				syncPlayers(map.players);
+				syncStars(map.stars);
+				syncCarriers(map.carriers);
 
-			for (auto& p : map.players) {
-				auto& ply = p.second;
+				std::vector<calcScore> scores;
 
-				printf("ply '%s', uid %d, hud %d, \n", ply.name.c_str(), ply.uid, ply.huid);
-			}
+				float maxTech = 0;
+				float maxEco = 0;
+				float maxPower = 0;
 
-			printf("done loading :)\n");
+				for (auto& p : map.players) {
+					auto& ply = p.second;
+
+					size_t techscore = 0;
+					techscore += ply.tech * 5;
+					techscore += ply.research.banking.level * 1;
+					techscore += ply.research.experimentation.level * 1;
+					techscore += ply.research.manufacturing.level * 2;
+					techscore += ply.research.range.level * 1;
+					techscore += ply.research.scanning.level * 1;
+					techscore += ply.research.terraforming.level * 2;
+					techscore += ply.research.weapons.level * 2;
+
+					size_t powerscore = 0;
+					powerscore += static_cast<size_t>(static_cast<float>(ply.totalShips)* static_cast<float>(ply.research.weapons.level) * 0.25f);
+					powerscore += static_cast<size_t>(static_cast<float>(ply.industry)* (static_cast<float>(ply.research.terraforming.level) / 3.0f));
+
+
+					size_t ecoscore = 0;
+					ecoscore += static_cast<size_t>(static_cast<float>(ply.economy)* (static_cast<float>(ply.research.banking.level) / 4.00f));
+
+					if (static_cast<float>(ecoscore) > maxEco) maxEco = static_cast<float>(ecoscore);
+					if (static_cast<float>(techscore) > maxTech) maxTech = static_cast<float>(techscore);
+					if (static_cast<float>(powerscore) > maxPower) maxPower = static_cast<float>(powerscore);
+
+					scores.push_back({
+						techscore,
+						powerscore,
+						ecoscore,
+						0.0f,
+						ply.name});
+
+					printf("ply '%s', uid %d, hud %d, \n", ply.name.c_str(), ply.uid, ply.huid);
+				}
+
+				for (auto& s : scores) {
+					s.total = static_cast<float>(s.tech) / maxTech +
+						static_cast<float>(s.eco) / maxEco +
+						static_cast<float>(s.power) / maxPower;
+				}
+
+				printf("\ntech\n");
+				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) {
+					return left.tech > right.tech;
+				});
+
+				for (auto& s : scores) {
+					printf("ply '%s' with %d\n", s.name.c_str(), s.tech);
+				}
+
+
+				printf("\neconomy\n");
+				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) {
+					return left.eco > right.eco;
+				});
+				for (auto& s : scores) {
+					printf("ply '%s' with %d\n", s.name.c_str(), s.eco);
+				}
+
+				printf("\npower\n");
+				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) {
+					return left.power > right.power;
+				});
+
+				for (auto& s : scores) {
+					printf("ply '%s' with %d\n", s.name.c_str(), s.power);
+				}
+
+				printf("\ntotal\n");
+				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) {
+					return left.total > right.total;
+				});
+
+				for (auto& s : scores) {
+					printf("ply '%s' with %f\n", s.name.c_str(), s.total);
+				}
+
+
+				printf("done loading :)\n");
+			});
 		});
 	}
 
