@@ -8,6 +8,8 @@ namespace bt {
 		bool movingMap = false;
 		mainframe::math::Vector2i oldMovePos;
 
+		bool moveDirections[4];
+
 	public:
 		mainframe::math::Vector2 location;
 		mainframe::math::Vector2 zoom {0.5f, 0.5f};
@@ -19,5 +21,6 @@ namespace bt {
 		mainframe::math::AABB screenToWorld(const mainframe::math::AABB& screenpos);
 
 		void hook(mainframe::ui::Scene& scene);
+		void update();
 	};
 }

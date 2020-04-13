@@ -39,7 +39,6 @@ namespace bt {
 
 		MenuBase::initMenus(*this);
 		MenuBase::switchMenu(Menus::login);
-
 	}
 
 	void bt::Game::setWindow(std::unique_ptr<Window>& w) {
@@ -53,7 +52,6 @@ namespace bt {
 
 	void Game::draw() {
 		auto wsize = Vector2(stencil.getWindowSize());
-
 		stencil.drawPolygon({
 			{
 				{{0, 0},		{0, 0}, {0.2f, 0.0f, 0.0f}},
@@ -68,8 +66,9 @@ namespace bt {
 		});
 
 		world.draw(stencil);
-
 		scene->draw(stencil);
+
+		stencil.draw();
 		window->swapBuffer();
 	}
 
@@ -85,6 +84,8 @@ namespace bt {
 
 	void Game::update() {
 		scene->update();
+		camera.update();
+
 		world.update();
 
 		if (window->getShouldClose()) {
