@@ -23,15 +23,14 @@ namespace bt {
 	void Star::draw(mainframe::render::Stencil& stencil) {
 		auto& cam = BromTron::cam();
 		auto spos = cam.worldToScreen(location);
-		mainframe::math::Vector2 ssize = {64, 64};
 
 		auto tex = Content::getTexture("stars");
 		mainframe::math::AABB icon = {1.0f / 9.0f, 0, 1.0f / 9.0f, 1.0f / 9.0f};
 		if (visible) icon.x = 0;
 
 		stencil.drawTexture(
-			spos - ssize / 2,
-			ssize,
+			spos - 32,
+			64,
 			*tex,
 			mainframe::render::Colors::White,
 			{icon.x, icon.y},
@@ -39,15 +38,6 @@ namespace bt {
 		);
 
 		if (owner == nullptr) return;
-
-		icon = owner->getIconAABB();
-		stencil.drawTexture(
-			spos - ssize / 2,
-			ssize,
-			*tex,
-			mainframe::render::Colors::White,
-			{icon.x, icon.y},
-			{icon.x + icon.w, icon.y + icon.h}
-		);
+		stencil.drawRecording(owner->icons.getIcon(owner->icon()), spos - 16);
 	}
 }

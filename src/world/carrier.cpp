@@ -38,17 +38,6 @@ namespace bt {
 		);
 
 		if (owner == nullptr) return;
-
-		icon = owner->getIconAABB();
-		ssize = {48, 48};
-
-		stencil.drawTexture(
-			spos - ssize / 2,
-			ssize,
-			*tex,
-			mainframe::render::Colors::White,
-			{icon.x, icon.y},
-			{icon.x + icon.w, icon.y + icon.h}
-		);
+		stencil.drawRecording(owner->icons.getIcon(owner->icon()), spos - 16);
 	}
 }
