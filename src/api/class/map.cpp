@@ -2,9 +2,10 @@
 
 namespace bt {
 	void from_json(const nlohmann::json& j, ApiCarrierOrder& obj) {
-		for (size_t i = 0; i < 4; i++) {
-			obj.args[i] = j[i];
-		}
+		obj.delay = j[0];
+		obj.starId = j[1];
+		obj.type = j[2];
+		obj.ships = j[3];
 	}
 
 	void from_json(const nlohmann::json& j, ApiCarrier& obj) {
@@ -17,7 +18,7 @@ namespace bt {
 		obj.location = {std::stof(j.at("x").get<std::string>()), std::stof(j.at("y").get<std::string>())};
 		obj.target = {std::stof(j.at("lx").get<std::string>()), std::stof(j.at("ly").get<std::string>())};
 
-		obj.flying = j.at("l") == 0;
+		obj.flying = j.at("l") != 0;
 
 		j.at("o").get_to(obj.orders);
 	}

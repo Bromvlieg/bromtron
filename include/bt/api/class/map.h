@@ -9,7 +9,10 @@
 namespace bt {
 	class ApiCarrierOrder {
 	public:
-		size_t args[4];
+		size_t delay;
+		size_t starId;
+		size_t type;
+		size_t ships;
 	};
 	void from_json(const nlohmann::json& j, ApiCarrierOrder& obj);
 
