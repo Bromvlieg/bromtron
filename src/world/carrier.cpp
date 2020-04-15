@@ -16,6 +16,7 @@ namespace bt {
 		uid = carrier.uid;
 		location = carrier.location;
 		owner = world.getPlayer(carrier.puid);
+		star = world.getStar(carrier.ouid);
 
 		for (auto& order : carrier.orders) {
 			orders.push_back({

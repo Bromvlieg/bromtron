@@ -12,15 +12,12 @@ namespace bt {
 
 	enum class OrderType {
 		none,
-
-		collect,
 		collectAll,
-		collectAllBut,
-
-		drop,
 		dropAll,
+		collect,
+		drop,
+		collectAllBut,
 		dropAllBut,
-
 		garrison
 	};
 
@@ -36,6 +33,7 @@ namespace bt {
 	public:
 		std::vector<Order> orders;
 		size_t uid = 0;
+		std::shared_ptr<Star> star;
 		std::string name;
 		mainframe::math::Vector2 location;
 

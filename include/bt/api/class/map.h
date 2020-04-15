@@ -22,15 +22,14 @@ namespace bt {
 
 		size_t uid = 0;
 		size_t puid = 0;
+		size_t ouid = 0;
 		size_t ships = 0;
 
 		mainframe::math::Vector2 location;
 		mainframe::math::Vector2 target;
 		std::vector<ApiCarrierOrder> orders;
 
-		size_t w = 0; // ??
-
-		bool flying = false;
+		bool visible = false;
 	};
 	void from_json(const nlohmann::json& j, ApiCarrier& obj);
 
