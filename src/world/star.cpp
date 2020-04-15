@@ -21,23 +21,20 @@ namespace bt {
 	}
 
 	void Star::draw(mainframe::render::Stencil& stencil) {
-		auto& cam = BromTron::getCam();
-		auto spos = cam.worldToScreen(location);
+		auto& game = BromTron::getGame();
+		auto& conf = game.config.ui;
+		auto spos = game.camera.worldToScreen(location);
 
-		auto tex = Content::getTexture("stars");
-		mainframe::math::AABB icon = {1.0f / 9.0f, 0, 1.0f / 9.0f, 1.0f / 9.0f};
-		if (visible) icon.x = 0;
+		stencil.drawRecording(game.world.icons.getIcon(visible ? Icon::starVisible : Icon::starHidden), spos - conf.iconStarSize / 2, conf.iconStarSize / conf.iconSheetSize);
+	}
 
-		stencil.drawTexture(
-			spos - 32,
-			64,
-			*tex,
-			mainframe::render::Colors::White,
-			{icon.x, icon.y},
-			{icon.x + icon.w, icon.y + icon.h}
-		);
-
+	void Star::drawOwnership(mainframe::render::Stencil& stencil) {
 		if (owner == nullptr) return;
-		stencil.drawRecording(owner->icons.getIcon(owner->icon()), spos - 16);
+
+		auto& game = BromTron::getGame();
+		auto& conf = game.config.ui;
+		auto spos = game.camera.worldToScreen(location);
+
+		stencil.drawRecording(owner->icons.getIcon(owner->icon()), spos - conf.iconStarRingSize / 2, conf.iconStarRingSize / conf.iconSheetSize);
 	}
 }

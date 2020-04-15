@@ -127,9 +127,11 @@ namespace bt {
 	};
 
 	void World::loadGame(const ApiPlayerGame& lobby) {
-		auto& api = BromTron::getApi();
+		auto& game = BromTron::getGame();
+		icons.setStyle(game.config.ui.iconSheetSize, mainframe::render::Colors::White, game.stencil);
+		iconsShadows.setStyle(game.config.ui.iconSheetSize, mainframe::render::Colors::Black, game.stencil);
 
-		apiCallLoadGame = api.getMap(lobby.id, [this](ApiMap& map, const std::string& errMsg) {
+		apiCallLoadGame = game.api.getMap(lobby.id, [this](ApiMap& map, const std::string& errMsg) {
 			BromTron::getGame().scene->invoke([this, map, errMsg]() {
 				syncPlayers(map.players);
 				syncStars(map.stars);
@@ -242,5 +244,8 @@ namespace bt {
 
 		for (auto& obj : tmpStars) obj->draw(stencil);
 		for (auto& obj : tmpCarriers) obj->draw(stencil);
+
+		for (auto& obj : tmpStars) obj->drawOwnership(stencil);
+		for (auto& obj : tmpCarriers) obj->drawOwnership(stencil);
 	}
 }

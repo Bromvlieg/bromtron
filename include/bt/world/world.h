@@ -27,6 +27,9 @@ namespace bt {
 		void syncCarriers(const std::map<std::string, ApiCarrier> carrierst);
 
 	public:
+		IconSheet icons;
+		IconSheet iconsShadows;
+
 		std::shared_ptr<Star> getStar(size_t uid);
 		std::shared_ptr<Player> getPlayer(size_t uid);
 		std::shared_ptr<Carrier> getCarrier(size_t uid);

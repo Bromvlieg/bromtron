@@ -8,16 +8,18 @@
 #include <bt/world/icons.h>
 
 namespace bt {
+
 	class Player {
 	public:
+		static std::vector<mainframe::render::Color> Colors;
+
 		IconSheet icons;
 
 		size_t uid = 0;
 		std::string name;
+		mainframe::render::Color color;
 
 		void load(const ApiMapPlayer& star);
-
-		mainframe::math::AABB getIconAABB();
 
 		void update();
 		void draw(mainframe::render::Stencil& stencil);

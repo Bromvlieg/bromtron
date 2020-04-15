@@ -38,9 +38,12 @@ namespace bt {
 		void generateIconDiamond(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col);
 		void generateIconStar(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col);
 		void generateIconLongCircle(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col);
+		void generateIconCarrier(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col);
+		void generateStarVisible(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col);
+		void generateStarHidden(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col);
 
 	public:
-		void setStyle(size_t size, const mainframe::render::Color& col, mainframe::render::Stencil& stencil);
+		void setStyle(float size, const mainframe::render::Color& col, mainframe::render::Stencil& stencil);
 		const mainframe::render::Stencil::Recording& getIcon(Icon icon);
 	};
 }

@@ -26,5 +26,6 @@ namespace bt {
 
 		void update();
 		void draw(mainframe::render::Stencil& stencil);
+		void drawOwnership(mainframe::render::Stencil& stencil);
 	};
 }

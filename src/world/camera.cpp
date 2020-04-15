@@ -5,43 +5,34 @@
 
 namespace bt {
 	mainframe::math::Vector2 Camera::worldToScreen(const mainframe::math::Vector2& worldpos) {
-		return (worldpos * scale) * zoom + location;
+		return (worldpos * BromTron::getConfig().world.scale) * zoom + location;
 	}
 
 	mainframe::math::Vector2 Camera::screenToWorld(const mainframe::math::Vector2& screenpos) {
-		return ((screenpos - location) / zoom) / scale;
-	}
-
-	mainframe::math::AABB Camera::worldToScreen(const mainframe::math::AABB& worldpos) {
-		auto pos = worldToScreen(mainframe::math::Vector2(worldpos.x, worldpos.y));
-		return {pos.x, pos.y, worldpos.w, worldpos.h};
-		//return {pos.x, pos.y, worldpos.w * zoom.x, worldpos.h * zoom.y};
-	}
-
-	mainframe::math::AABB Camera::screenToWorld(const mainframe::math::AABB& screenpos) {
-		auto pos = screenToWorld(mainframe::math::Vector2(screenpos.x, screenpos.y));
-		return {pos.x, pos.y, screenpos.w, screenpos.h};
-		//return {pos.x, pos.y, screenpos.w / zoom.x, screenpos.h / zoom.y};
+		return ((screenpos - location) / zoom) / BromTron::getConfig().world.scale;
 	}
 
 	void Camera::update() {
-		float speed = 25.0f;
+		auto& conf = BromTron::getConfig().camera;
 
-		if (moveDirections[0]) location.y += speed;
-		if (moveDirections[1]) location.x -= speed;
-		if (moveDirections[2]) location.y -= speed;
-		if (moveDirections[3]) location.x += speed;
+		if (moveDirections[0]) location.y += conf.moveSpeed;
+		if (moveDirections[1]) location.x -= conf.moveSpeed;
+		if (moveDirections[2]) location.y -= conf.moveSpeed;
+		if (moveDirections[3]) location.x += conf.moveSpeed;
 	}
 
 	void Camera::hook(mainframe::ui::Scene& scene) {
 		location = scene.getSize() / 2;
 
 		scene.onMouseScroll += [this](const mainframe::math::Vector2i& mousePos, const mainframe::math::Vector2i& offset) {
+			auto& conf = BromTron::getConfig().camera;
+
 			auto oldworldpos = screenToWorld(mousePos);
 
-			zoom += zoom * 0.9f * mainframe::math::Vector2(static_cast<float>(offset.y) / 100);
-			if (zoom.x > 5) zoom = 5;
-			if (zoom.x < 0.2f) zoom = 0.2f;
+			float scrollStrength = static_cast<float>(offset.y);
+			zoom += zoom * conf.zoomSpeed * mainframe::math::Vector2(scrollStrength / conf.zoomScrollScale);
+			if (zoom.x > conf.zoomMax) zoom = conf.zoomMax;
+			if (zoom.x < conf.zoomMin) zoom = conf.zoomMin;
 
 			auto newscreenpos = worldToScreen(oldworldpos);
 
@@ -61,10 +52,12 @@ namespace bt {
 		};
 
 		scene.onKeyPress += [this](unsigned int key, unsigned int scancode, mainframe::ui::ModifierKey mods, unsigned int action) {
-			if (key == GLFW_KEY_W) moveDirections[0] = action == 1;
-			if (key == GLFW_KEY_D) moveDirections[1] = action == 1;
-			if (key == GLFW_KEY_S) moveDirections[2] = action == 1;
-			if (key == GLFW_KEY_A) moveDirections[3] = action == 1;
+			auto& mapping = BromTron::getConfig().mapping;
+
+			if (key == mapping.camMoveUp) moveDirections[0] = action >= 1;
+			if (key == mapping.camMoveRight) moveDirections[1] = action >= 1;
+			if (key == mapping.camMoveDown) moveDirections[2] = action >= 1;
+			if (key == mapping.camMoveLeft) moveDirections[3] = action >= 1;
 		};
 	}
 }
