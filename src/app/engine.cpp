@@ -23,6 +23,10 @@ namespace bt {
 		return getGame().camera;
 	}
 
+	Config& BromTron::getConfig() {
+		return getGame().config;
+	}
+
 	Game& BromTron::game() {
 		return app;
 	}

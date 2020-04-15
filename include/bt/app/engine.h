@@ -14,5 +14,6 @@ namespace bt {
 		static Api& getApi();
 		static World& getWorld();
 		static Camera& getCam();
+		static Config& getConfig();
 	};
 }

@@ -8,6 +8,7 @@
 #include <bt/api/api.h>
 #include <bt/world/camera.h>
 #include <bt/world/world.h>
+#include <bt/misc/config.h>
 
 namespace bt {
 	class Game : public mainframe::game::Engine {
@@ -28,6 +29,7 @@ namespace bt {
 		Api api;
 		World world;
 		Camera camera;
+		Config config;
 		ApiLocalPlayer localplayer;
 
 		virtual void init() override;
