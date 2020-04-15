@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 
 	auto& game = bt::BromTron::getGame();
 	game.setWindow(w);
-	game.setFPS(75);
+	game.setFPS(60);
 
 	game.init();
 	game.run();
