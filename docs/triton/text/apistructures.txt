@@ -1,3 +1,6 @@
+--
+-- source: https://github.com/ekimekim/neptunesfolly/blob/master/docs/api.txt
+--
 
 POST http://triton.ironhelmet.com/grequest/order
 Cookie: ???
