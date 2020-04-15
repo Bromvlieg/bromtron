@@ -54,10 +54,20 @@ namespace bt {
 		scene.onKeyPress += [this](unsigned int key, unsigned int scancode, mainframe::ui::ModifierKey mods, unsigned int action) {
 			auto& mapping = BromTron::getConfig().mapping;
 
-			if (key == mapping.camMoveUp) moveDirections[0] = action >= 1;
-			if (key == mapping.camMoveRight) moveDirections[1] = action >= 1;
-			if (key == mapping.camMoveDown) moveDirections[2] = action >= 1;
-			if (key == mapping.camMoveLeft) moveDirections[3] = action >= 1;
+			KeyMapping comboPressed = {key, mods};
+			if (action >= 1) {
+				// to start moving a press combo must match
+				if (comboPressed == mapping.camMoveUp) moveDirections[0] = true;
+				if (comboPressed == mapping.camMoveRight) moveDirections[1] = true;
+				if (comboPressed == mapping.camMoveDown) moveDirections[2] = true;
+				if (comboPressed == mapping.camMoveLeft) moveDirections[3] = true;
+			} else {
+				// to end moving, only listen to prevent camera movement from getting stuck
+				if (comboPressed.key == mapping.camMoveUp.key) moveDirections[0] = false;
+				if (comboPressed.key == mapping.camMoveRight.key) moveDirections[1] = false;
+				if (comboPressed.key == mapping.camMoveDown.key) moveDirections[2] = false;
+				if (comboPressed.key == mapping.camMoveLeft.key) moveDirections[3] = false;
+			}
 		};
 	}
 }

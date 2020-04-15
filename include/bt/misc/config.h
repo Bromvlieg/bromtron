@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mainframe/utils/string.h>
+#include <mainframe/ui/modifierkey.h>
 
 #include <string>
 #include <map>
@@ -8,12 +9,21 @@
 #include <fmt/format.h>
 
 namespace bt {
+	class KeyMapping {
+	public:
+		size_t key = 0;
+		mainframe::ui::ModifierKey modifier;
+
+		bool operator==(const KeyMapping& other);
+		bool operator!=(const KeyMapping& other);
+	};
+
 	class ConfigKeymapping {
 	public:
-		size_t camMoveUp = 87;
-		size_t camMoveDown = 83;
-		size_t camMoveLeft = 65;
-		size_t camMoveRight = 68;
+		KeyMapping camMoveUp = {87, mainframe::ui::ModifierKey::none};
+		KeyMapping camMoveDown = {83, mainframe::ui::ModifierKey::none};
+		KeyMapping camMoveLeft = {65, mainframe::ui::ModifierKey::none};
+		KeyMapping camMoveRight = {68, mainframe::ui::ModifierKey::none};
 	};
 
 	class ConfigWorld {
