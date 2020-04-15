@@ -3,107 +3,12 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include <bt/api/class/playerloggedin.h>
+#include <bt/api/class/player.h>
+#include <bt/api/class/star.h>
+#include <bt/api/class/carrier.h>
 #include <mainframe/math/vector3.h>
 
 namespace bt {
-	class ApiCarrierOrder {
-	public:
-		size_t delay;
-		size_t starId;
-		size_t type;
-		size_t ships;
-	};
-	void from_json(const nlohmann::json& j, ApiCarrierOrder& obj);
-
-	class ApiCarrier {
-	public:
-		std::string name;
-
-		size_t uid = 0;
-		size_t puid = 0;
-		size_t ouid = 0;
-		size_t ships = 0;
-
-		mainframe::math::Vector2 location;
-		mainframe::math::Vector2 target;
-		std::vector<ApiCarrierOrder> orders;
-
-		bool visible = false;
-	};
-	void from_json(const nlohmann::json& j, ApiCarrier& obj);
-
-	class ApiStar {
-	public:
-		std::string name;
-
-		size_t uid = 0;
-		size_t puid = 0;
-
-		mainframe::math::Vector2 location;
-
-		bool visible = false;
-
-		// below fields only present if visible
-		size_t tech = 0;
-		size_t economy = 0;
-		size_t industry = 0;
-
-		size_t ships = 0;
-		size_t carriers = 0;
-		size_t resources = 0;
-
-		size_t nr = 0; // ??
-	};
-	void from_json(const nlohmann::json& j, ApiStar& obj);
-
-	class ApiMapPlayerTech {
-	public:
-		size_t level;
-		float value;
-	};
-	void from_json(const nlohmann::json& j, ApiMapPlayerTech& obj);
-
-	class ApiMapPlayerResearch {
-	public:
-		ApiMapPlayerTech range;
-		ApiMapPlayerTech banking;
-		ApiMapPlayerTech weapons;
-		ApiMapPlayerTech scanning;
-		ApiMapPlayerTech manufacturing;
-		ApiMapPlayerTech experimentation;
-		ApiMapPlayerTech terraforming;
-	};
-	void from_json(const nlohmann::json& j, ApiMapPlayerResearch& obj);
-
-	class ApiMapPlayer {
-	public:
-		ApiMapPlayerResearch research;
-
-		std::string name;
-		size_t huid = 0;
-		size_t uid = 0;
-
-		size_t tech = 0;
-		size_t economy = 0;
-		size_t industry = 0;
-
-		size_t regard = 0;
-		size_t avatar = 0;
-
-		size_t totalStars = 0;
-		size_t totalCarriers = 0;
-		size_t totalShips = 0;
-
-		size_t turnsMissed = 0;
-		size_t karmaToGive = 0;
-
-		bool ai = false;
-		bool conceded = false;
-		bool ready = false;
-	};
-	void from_json(const nlohmann::json& j, ApiMapPlayer& obj);
-
 	class ApiMap {
 	public:
 		std::string id;
@@ -115,7 +20,7 @@ namespace bt {
 		size_t starsForVictory = 0;
 		size_t turnBasedTimeout = 0;
 
-		std::map<std::string, ApiMapPlayer> players;
+		std::map<std::string, ApiPlayer> players;
 		std::map<std::string, ApiCarrier> carriers;
 		std::map<std::string, ApiStar> stars;
 

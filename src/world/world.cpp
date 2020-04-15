@@ -63,7 +63,7 @@ namespace bt {
 		}
 	}
 
-	void World::syncPlayers(const std::map<std::string, ApiMapPlayer> playerlst) {
+	void World::syncPlayers(const std::map<std::string, ApiPlayer> playerlst) {
 		for (auto& pair : playerlst) {
 			auto& ply = pair.second;
 			auto ourply = getPlayer(ply.uid);
@@ -126,7 +126,7 @@ namespace bt {
 		std::string name;
 	};
 
-	void World::loadGame(const ApiPlayerGame& lobby) {
+	void World::loadGame(const ApiLobby& lobby) {
 		auto& game = BromTron::getGame();
 		icons.setStyle(game.config.ui.iconSheetSize, mainframe::render::Colors::White, game.stencil);
 		iconsShadows.setStyle(game.config.ui.iconSheetSize, mainframe::render::Colors::Black, game.stencil);

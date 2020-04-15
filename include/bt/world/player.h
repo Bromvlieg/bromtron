@@ -8,7 +8,6 @@
 #include <bt/world/icons.h>
 
 namespace bt {
-
 	class Player {
 	public:
 		static std::vector<mainframe::render::Color> Colors;
@@ -19,7 +18,7 @@ namespace bt {
 		std::string name;
 		mainframe::render::Color color;
 
-		void load(const ApiMapPlayer& star);
+		void load(const ApiPlayer& star);
 
 		void update();
 		void draw(mainframe::render::Stencil& stencil);

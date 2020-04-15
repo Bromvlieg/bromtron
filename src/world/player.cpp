@@ -14,7 +14,7 @@ namespace bt {
 		mainframe::render::Color(0.8f, 0.1f, 1.0f), // purple
 	};
 
-	void Player::load(const ApiMapPlayer& ply) {
+	void Player::load(const ApiPlayer& ply) {
 		name = ply.name;
 		uid = ply.uid;
 

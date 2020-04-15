@@ -11,7 +11,7 @@
 #include <mainframe/utils/thread.h>
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
-#include <bt/api/class/playerloggedin.h>
+#include <bt/api/class/localplayer.h>
 #include <bt/api/class/map.h>
 
 namespace bt {
