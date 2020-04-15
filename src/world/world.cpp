@@ -127,10 +127,10 @@ namespace bt {
 	};
 
 	void World::loadGame(const ApiPlayerGame& lobby) {
-		auto& api = BromTron::api();
+		auto& api = BromTron::getApi();
 
 		apiCallLoadGame = api.getMap(lobby.id, [this](ApiMap& map, const std::string& errMsg) {
-			BromTron::game().scene->invoke([this, map, errMsg]() {
+			BromTron::getGame().scene->invoke([this, map, errMsg]() {
 				syncPlayers(map.players);
 				syncStars(map.stars);
 				syncCarriers(map.carriers);

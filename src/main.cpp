@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	auto& game = bt::BromTron::game();
+	auto& game = bt::BromTron::getGame();
 	game.setWindow(w);
 	game.setFPS(75);
 

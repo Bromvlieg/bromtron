@@ -19,7 +19,7 @@ namespace bt {
 		};
 
 		size_t colindex = uid - uid / 8 * 8;
-		icons.setStyle(32, cols[colindex], BromTron::game().stencil);
+		icons.setStyle(32, cols[colindex], BromTron::getGame().stencil);
 	}
 
 	void Player::update() {

@@ -21,7 +21,7 @@ namespace bt {
 	}
 
 	void Star::draw(mainframe::render::Stencil& stencil) {
-		auto& cam = BromTron::cam();
+		auto& cam = BromTron::getCam();
 		auto spos = cam.worldToScreen(location);
 
 		auto tex = Content::getTexture("stars");
