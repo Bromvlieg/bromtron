@@ -47,7 +47,7 @@ namespace bt {
 		stencil.setWindowSize(window->getSize());
 		scene->setWindow(*window);
 
-		camera.hook(*scene);
+		camera.hookScene(*scene);
 	}
 
 	void Game::draw() {

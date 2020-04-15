@@ -21,7 +21,7 @@ namespace bt {
 		if (moveDirections[3]) location.x += conf.moveSpeed;
 	}
 
-	void Camera::hook(mainframe::ui::Scene& scene) {
+	void Camera::hookScene(mainframe::ui::Scene& scene) {
 		location = scene.getSize() / 2;
 
 		scene.onMouseScroll += [this](const mainframe::math::Vector2i& mousePos, const mainframe::math::Vector2i& offset) {

@@ -17,7 +17,7 @@ namespace bt {
 		mainframe::math::Vector2 worldToScreen(const mainframe::math::Vector2& worldpos);
 		mainframe::math::Vector2 screenToWorld(const mainframe::math::Vector2& screenpos);
 
-		void hook(mainframe::ui::Scene& scene);
+		void hookScene(mainframe::ui::Scene& scene);
 		void update();
 	};
 }
