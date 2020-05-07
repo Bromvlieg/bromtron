@@ -44,10 +44,10 @@ namespace bt {
 	class ConfigUI {
 	public:
 		float iconSheetSize = 128.0f;
-		float iconStarSize = 26.0f;
-		float iconStarRingSize = 42.0f;
-		float iconCarrierSize = 26.0f;
-		float iconCarrierRingSize = 42.0f;
+		float iconStarSize = 16.0f;
+		float iconStarRingSize = 26.0f;
+		float iconCarrierSize = 16.0f;
+		float iconCarrierRingSize = 26.0f;
 		float iconCarrierShadowScale = 1.3f;
 	};
 

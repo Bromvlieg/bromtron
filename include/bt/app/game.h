@@ -18,10 +18,6 @@ namespace bt {
 		using Stencil = mainframe::render::Stencil;
 		using Scene = mainframe::ui::Scene;
 
-		std::shared_ptr<Font> font = std::make_shared<Font>("fonts/VeraMono.ttf", 15.0f);
-		std::shared_ptr<Font> fontSmall = std::make_shared<Font>("fonts/VeraMono.ttf", 13.0f);
-		Texture tex = Texture("textures/test.png");
-
 	public:
 		std::shared_ptr<Scene> scene = Scene::create();
 		std::unique_ptr<Window> window;

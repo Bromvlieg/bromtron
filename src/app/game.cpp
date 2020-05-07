@@ -17,16 +17,6 @@ namespace bt {
 	void Game::init() {
 		Translate::load("data/translations.json");
 
-		Content::loadImage("fleet_range");
-		Content::loadImage("fleet_waypoint");
-		Content::loadImage("fleet_waypoint_next");
-		Content::loadImage("halo");
-		Content::loadImage("halo2");
-		Content::loadImage("owner_rings_48");
-		Content::loadImage("stars");
-		Content::loadImage("scanning_range");
-		Content::loadImage("selection_ring");
-
 		Content::loadFont("VeraMono", "text");
 		Content::loadFont("VeraMono", "textSmall");
 
