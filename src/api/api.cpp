@@ -146,7 +146,12 @@ namespace bt {
 			if (inst == nullptr) continue;
 
 			printf("calling DO api, SUCCESS: %s\n", path.c_str());
-			inst->ptr->call(command != "meta:error", value);
+
+			bool success = true;
+			if (command == "meta:error") { success = false; }
+			if (command == "meta:login_required") { success = false; value = "Login required"; } // when not error `value` is set to empty object, we expect a string
+
+			inst->ptr->call(success, value);
 		}
 	}
 
