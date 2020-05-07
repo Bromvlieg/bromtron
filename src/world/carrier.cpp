@@ -2,6 +2,9 @@
 #include <bt/misc/content.h>
 #include <bt/world/world.h>
 #include <bt/world/player.h>
+#include <bt/world/star.h>
+#include <mainframe/numbers/pi.h>
+#include <bt/app/engine.h>
 
 namespace bt {
 	Carrier::Carrier(World& w) : world(w) {
@@ -13,6 +16,16 @@ namespace bt {
 		uid = carrier.uid;
 		location = carrier.location;
 		owner = world.getPlayer(carrier.puid);
+		star = world.getStar(carrier.ouid);
+
+		for (auto& order : carrier.orders) {
+			orders.push_back({
+				static_cast<OrderType>(order.type),
+				world.getStar(order.starId),
+				order.ships,
+				order.delay
+			});
+		}
 	}
 
 	void Carrier::update() {
@@ -20,33 +33,38 @@ namespace bt {
 	}
 
 	void Carrier::draw(mainframe::render::Stencil& stencil) {
-		auto spos = world.worldToScreen(location);
-		mainframe::math::Vector2 ssize = {32, 32};
+		auto& game = BromTron::getGame();
+		auto& conf = game.config.ui;
 
-		auto tex = Content::getTexture("stars");
-		mainframe::math::AABB icon = {1.0f / 9.0f * 2, 0, 1.0f / 9.0f, 1.0f / 9.0f};
+		auto spos = BromTron::getCam().worldToScreen(location);
 
-		stencil.drawTexture(
-			spos - ssize / 2,
-			ssize,
-			*tex,
-			mainframe::render::Colors::White,
-			{icon.x, icon.y},
-			{icon.x + icon.w, icon.y + icon.h}
-		);
+		Order* currentOrder = nullptr;
+		if (!orders.empty()) {
+			auto& order = orders.front();
+			currentOrder = &order;
 
-		if (owner == nullptr) return;
+			auto starpos = BromTron::getCam().worldToScreen(order.star->location);
 
-		icon = owner->getIconAABB();
-		ssize = {48, 48};
+			mainframe::render::Color backcol = {0.9f, 0.9f, 0.9f, 0.6f};
+			stencil.drawLine(spos, starpos, conf.iconCarrierSize / 4, backcol);
 
-		stencil.drawTexture(
-			spos - ssize / 2,
-			ssize,
-			*tex,
-			mainframe::render::Colors::White,
-			{icon.x, icon.y},
-			{icon.x + icon.w, icon.y + icon.h}
-		);
+			auto plycol = owner->color;
+			plycol.a = 0.6f;
+			stencil.drawLine(spos, starpos, conf.iconCarrierSize / 8, plycol);
+		}
+
+		float angle = currentOrder == nullptr ? 0 : location.angle(currentOrder->star->location) - mainframe::numbers::pi<float> / 4;
+
+		stencil.drawRecording(game.world.iconsShadows.getIcon(Icon::carrier), spos - conf.iconCarrierSize * conf.iconCarrierShadowScale / 2, conf.iconCarrierSize * conf.iconCarrierShadowScale / conf.iconSheetSize, angle, conf.iconCarrierSize * conf.iconCarrierShadowScale / 2);
+		stencil.drawRecording(game.world.icons.getIcon(Icon::carrier), spos - conf.iconCarrierSize / 2, conf.iconCarrierSize / conf.iconSheetSize, angle, conf.iconCarrierSize / 2);
+	}
+
+	void Carrier::drawOwnership(mainframe::render::Stencil& stencil) {
+		auto& game = BromTron::getGame();
+		auto& conf = game.config.ui;
+
+		auto spos = BromTron::getCam().worldToScreen(location);
+
+		stencil.drawRecording(owner->icons.getIcon(owner->icon()), spos - conf.iconCarrierRingSize / 2, conf.iconCarrierRingSize / conf.iconSheetSize);
 	}
 }

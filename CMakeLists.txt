@@ -20,19 +20,10 @@ set(freetype-gl_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
 set(freetype-gl_BUILD_MAKEFONT OFF CACHE BOOL "" FORCE)
 set(freetype-gl_USE_VAO ON CACHE BOOL "" FORCE)
 
-find_package(nlohmann_json REQUIRED)
-find_package(freetype REQUIRED)
 find_package(curl REQUIRED)
 
-FetchContent_Declare(fmtlib
-	GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-)
-FetchContent_MakeAvailable(fmtlib)
-
-FetchContent_Declare(freetype-gl
-	GIT_REPOSITORY https://github.com/rougier/freetype-gl.git
-)
-FetchContent_MakeAvailable(freetype-gl)
+ include(conanbuildinfo.cmake)
+ conan_basic_setup()
 
 set(BT_DOWNLOAD_MAINFRAME false)
 if (BT_DOWNLOAD_MAINFRAME)
@@ -61,11 +52,9 @@ target_link_libraries(${output_target} PRIVATE
 	mainframe.ui
 	mainframe.game
 	mainframe.render
-	fmt::fmt
-	nlohmann_json::nlohmann_json
+	${CONAN_LIBS}
 	CURL::libcurl
 )
-
 
 if (WIN32)
 	file(GLOB_RECURSE sdkdlls "dlls/*.dll")
@@ -77,9 +66,9 @@ if (WIN32)
 		add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll} ${PROJECT_SOURCE_DIR}/exec/${barename})
 	endforeach()
 
-	add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/${output_target}.exe ${PROJECT_SOURCE_DIR}/exec/${output_target}.exe)
+	add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/bin/${output_target}.exe ${PROJECT_SOURCE_DIR}/exec/${output_target}.exe)
 else()
-	add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/${output_target} ${PROJECT_SOURCE_DIR}/exec/${output_target})
+	add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/bin/${output_target} ${PROJECT_SOURCE_DIR}/exec/${output_target})
 endif()
 
 file(GLOB_RECURSE BT_CONTENT_DATA "data/*")

@@ -2,24 +2,32 @@
 #include <bt/app/game.h>
 
 namespace bt {
-	BromTron& BromTron::engine() {
+	BromTron& BromTron::getEngine() {
 		static BromTron inst;
 		return inst;
 	}
 
-	Game& BromTron::game() {
-		return engine().getGame();
-	}
-
-	Api& BromTron::api() {
-		return game().api;
-	}
-
-	World& BromTron::world() {
-		return game().world;
-	}
-
 	Game& BromTron::getGame() {
+		return getEngine().game();
+	}
+
+	Api& BromTron::getApi() {
+		return getGame().api;
+	}
+
+	World& BromTron::getWorld() {
+		return getGame().world;
+	}
+
+	Camera& BromTron::getCam() {
+		return getGame().camera;
+	}
+
+	Config& BromTron::getConfig() {
+		return getGame().config;
+	}
+
+	Game& BromTron::game() {
 		return app;
 	}
 }

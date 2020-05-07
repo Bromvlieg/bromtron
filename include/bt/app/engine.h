@@ -6,12 +6,14 @@
 namespace bt {
 	class BromTron {
 		Game app;
+		Game& game();
 
 	public:
-		static BromTron& engine();
-		static Game& game();
-		static Api& api();
-		static World& world();
-		Game& getGame();
+		static BromTron& getEngine();
+		static Game& getGame();
+		static Api& getApi();
+		static World& getWorld();
+		static Camera& getCam();
+		static Config& getConfig();
 	};
 }

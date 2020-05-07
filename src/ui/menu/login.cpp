@@ -29,7 +29,7 @@ namespace bt {
 	}
 
 	void MenuLogin::initPlayer() {
-		auto& api = BromTron::api();
+		auto& api = BromTron::getApi();
 
 		apiCall = api.initPlayer([this](ApiLocalPlayer ply, const std::string& errMsg) {
 			if (ply.id.empty()) {
@@ -38,10 +38,10 @@ namespace bt {
 			}
 
 			invoke([this, ply]() {
-				BromTron::game().localplayer = ply;
+				BromTron::getGame().localplayer = ply;
 				remove();
 
-				BromTron::world().loadGame(ply.gamesOpen[0]);
+				BromTron::getWorld().loadGame(ply.gamesOpen[0]);
 			});
 		});
 	}
@@ -54,7 +54,7 @@ namespace bt {
 		auto txtUser = createChild<Textbox>();
 		auto& txtUsersize = txtUser->getSize();
 		txtUser->setFont(font);
-		txtUser->setText("bromvlieg");
+		txtUser->setText("");
 		txtUser->resizeToContents();
 		txtUser->setSize({300, 30});
 		txtUser->setPos(oursize / 2 + Vector2i(-txtUsersize.x / 2, 0));
@@ -77,7 +77,7 @@ namespace bt {
 		btnmanual->setPos(oursize / 2 + Vector2i(-btnmanualsize.x / 2, boxSize.y / 2 - btnmanualsize.y - 10));
 
 		btnmanual->onClick += [this, txtUser, txtPass]() {
-			auto& api = BromTron::api();
+			auto& api = BromTron::getApi();
 			apiCall = api.login(txtUser->getText(), txtPass->getText(), [this, &api](bool success, const std::string& errMsg) {
 				if (!success) {
 					printf("login failed '%s'\n", errMsg.c_str());
@@ -96,7 +96,7 @@ namespace bt {
 		btnexit->setPos(oursize - btnexit->getSize() - 10);
 
 		btnexit->onClick += [this]() {
-			BromTron::game().quit();
+			BromTron::getGame().quit();
 		};
 
 		applyTheme();

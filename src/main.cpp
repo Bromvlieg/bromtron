@@ -8,9 +8,9 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	auto& game = bt::BromTron::game();
+	auto& game = bt::BromTron::getGame();
+	game.setFPS(static_cast<float>(w->getMonitor().refreshRate));
 	game.setWindow(w);
-	game.setFPS(75);
 
 	game.init();
 	game.run();

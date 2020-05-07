@@ -1,6 +1,7 @@
 #include <bt/world/star.h>
 #include <bt/world/world.h>
 #include <bt/misc/content.h>
+#include <bt/app/engine.h>
 
 namespace bt {
 	Star::Star(World& w) : world(w) {
@@ -20,32 +21,20 @@ namespace bt {
 	}
 
 	void Star::draw(mainframe::render::Stencil& stencil) {
-		auto spos = world.worldToScreen(location);
-		mainframe::math::Vector2 ssize = {64, 64};
+		auto& game = BromTron::getGame();
+		auto& conf = game.config.ui;
+		auto spos = game.camera.worldToScreen(location);
 
-		auto tex = Content::getTexture("stars");
-		mainframe::math::AABB icon = {1.0f / 9.0f, 0, 1.0f / 9.0f, 1.0f / 9.0f};
-		if (visible) icon.x = 0;
+		stencil.drawRecording(game.world.icons.getIcon(visible ? Icon::starVisible : Icon::starHidden), spos - conf.iconStarSize / 2, conf.iconStarSize / conf.iconSheetSize);
+	}
 
-		stencil.drawTexture(
-			spos - ssize / 2,
-			ssize,
-			*tex,
-			mainframe::render::Colors::White,
-			{icon.x, icon.y},
-			{icon.x + icon.w, icon.y + icon.h}
-		);
-
+	void Star::drawOwnership(mainframe::render::Stencil& stencil) {
 		if (owner == nullptr) return;
 
-		icon = owner->getIconAABB();
-		stencil.drawTexture(
-			spos - ssize / 2,
-			ssize,
-			*tex,
-			mainframe::render::Colors::White,
-			{icon.x, icon.y},
-			{icon.x + icon.w, icon.y + icon.h}
-		);
+		auto& game = BromTron::getGame();
+		auto& conf = game.config.ui;
+		auto spos = game.camera.worldToScreen(location);
+
+		stencil.drawRecording(owner->icons.getIcon(owner->icon()), spos - conf.iconStarRingSize / 2, conf.iconStarRingSize / conf.iconSheetSize);
 	}
 }
