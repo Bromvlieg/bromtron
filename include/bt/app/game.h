@@ -30,10 +30,9 @@ namespace bt {
 
 		virtual void init() override;
 
-		virtual void draw() override;
-		virtual void tick() override;
+		virtual void draw(const double alpha) override;
 		virtual void quit() override;
-		virtual void update() override;
+		virtual void update(float deltaTime, long long gameTime) override;
 
 		void setWindow(std::unique_ptr<Window>& w);
 	};

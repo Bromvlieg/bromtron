@@ -61,7 +61,7 @@ namespace bt {
 		pnlBack->setSize(boxSize - 20 - Vector2i(0, std::max(btnbacksize.y, btnselectsize.y) + 10));
 		pnlBack->setPos(getSize() / 2 - boxSize / 2 + 10);
 		pnlBack->setBars(true, false);
-		pnlBack->checkBars();
+		pnlBack->updateBars();
 
 		applyTheme();
 	}
@@ -90,13 +90,13 @@ namespace bt {
 		size_t countx = static_cast<size_t>(std::ceil(static_cast<float>(pnlBack->getSize().x) / static_cast<float>(iconsize.x)));
 		size_t county = static_cast<size_t>(std::ceil(static_cast<float>(pnlBack->getSize().y) / static_cast<float>(iconsize.y)));
 
-		size_t rows = options.size() / countx;
+		int rows = static_cast<int>(options.size() / countx);
 		int yoffset = rows > county ? 0: rows * (iconsize.y + 5) / 2;
 
 		size_t i = 0;
 		Vector2i pos;
 
-		size_t remY = std::min(options.size() / countx, county);
+		int remY = static_cast<int>(std::min(options.size() / countx, county));
 		if (remY == 0) remY++;
 
 		pos.y = pnlBack->getSize().y / 2 - (remY * (iconsize.y + 5)) / 2;
@@ -105,7 +105,7 @@ namespace bt {
 			size_t i = rowY * county;
 			if (i > options.size()) break;
 
-			size_t remX = std::min(options.size() - i, countx);
+			int remX = static_cast<int>(std::min(options.size() - i, countx));
 			pos.x = pnlBack->getSize().x / 2 - (remX * (iconsize.x + 5)) / 2;
 
 			for (size_t index = i; index < options.size(); index++) {
@@ -116,7 +116,7 @@ namespace bt {
 			pos.y += iconsize.y + 5;
 		}
 
-		pnlBack->checkBars();
+		pnlBack->updateBars();
 		return ret;
 
 	}

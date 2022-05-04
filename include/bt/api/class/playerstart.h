@@ -10,9 +10,9 @@ namespace bt {
 		size_t money = 0;
 		size_t ships = 0;
 
-		size_t tech = 0;
-		size_t economy = 0;
-		size_t industry = 0;
+		size_t techCost = 0;
+		size_t economyCost = 0;
+		size_t industryCost = 0;
 
 		size_t buildTech = 0;
 		size_t buildEconomy = 0;

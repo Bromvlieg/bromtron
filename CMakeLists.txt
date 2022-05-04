@@ -9,35 +9,41 @@ set(BT_DOWNLOAD_MAINFRAME true CACHE BOOL "use mainframe from git repo" FORCE)
 
 project ("BT" VERSION ${BT_VERSION})
 
-# libraries
-set(BUILD_TESTING OFF)
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_APIDOC OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
-set(freetype-gl_BUILD_MAKEFONT OFF CACHE BOOL "" FORCE)
-set(freetype-gl_USE_VAO ON CACHE BOOL "" FORCE)
+# conan for libaries
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+   file(DOWNLOAD "https://gist.githubusercontent.com/Bromvlieg/eb8564c44726fd985f3c26d929d2f1f3/raw/1d79995a9e6359e5e98499b268ea53850fbbf088/conan.cmake"
+                  "${CMAKE_BINARY_DIR}/conan.cmake")
+endif()
 
-find_package(curl REQUIRED)
+include(${CMAKE_BINARY_DIR}/conan.cmake)
 
- include(conanbuildinfo.cmake)
- conan_basic_setup()
+if(CMAKE_COMPILER_IS_GNUXX)
+   set(CONAN_SETTINGS compiler.libcxx=libstdc++11)
+endif()
 
-set(BT_DOWNLOAD_MAINFRAME false)
-if (BT_DOWNLOAD_MAINFRAME)
+conan_cmake_run(CONANFILE conanfile.txt
+                SETTINGS ${CONAN_SETTINGS}
+                BUILD missing)
+
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
+find_package(CURL REQUIRED)
+find_package(nlohmann_json)
+
+FetchContent_GetProperties(mainframe)
+if(NOT mainframe_POPULATED)
 	FetchContent_Declare(mainframe
-		GIT_REPOSITORY http://gerrit.4o6.nl/mainframe
+		GIT_REPOSITORY https://github.com/Goofy-Penguin/Mainframe.git
 	)
+
 	FetchContent_MakeAvailable(mainframe)
-else()
-	add_subdirectory ("mainframe")
 endif()
 
 file(GLOB_RECURSE source_files
 	"src/*.cpp"
 	"src/*.c"
+	"include/*.h"
 	"include/*.hpp"
 )
 
@@ -52,8 +58,8 @@ target_link_libraries(${output_target} PRIVATE
 	mainframe.ui
 	mainframe.game
 	mainframe.render
-	${CONAN_LIBS}
 	CURL::libcurl
+	nlohmann_json::nlohmann_json
 )
 
 if (WIN32)
@@ -66,9 +72,9 @@ if (WIN32)
 		add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll} ${PROJECT_SOURCE_DIR}/exec/${barename})
 	endforeach()
 
-	add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/bin/${output_target}.exe ${PROJECT_SOURCE_DIR}/exec/${output_target}.exe)
+	add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/${output_target}.exe ${PROJECT_SOURCE_DIR}/exec/${output_target}.exe)
 else()
-	add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/bin/${output_target} ${PROJECT_SOURCE_DIR}/exec/${output_target})
+	add_custom_command(TARGET ${output_target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/${output_target} ${PROJECT_SOURCE_DIR}/exec/${output_target})
 endif()
 
 file(GLOB_RECURSE BT_CONTENT_DATA "data/*")

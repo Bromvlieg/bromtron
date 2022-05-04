@@ -6,6 +6,7 @@ using Texture = mainframe::render::Texture;
 using TextureHandle = mainframe::render::TextureHandle;
 
 namespace bt {
+	mainframe::render::TextEngine Content::textEngine;
 	std::map<std::string, Content::ContentType> Content::assets;
 
 	auto& getLoadedTextures() {
@@ -14,15 +15,15 @@ namespace bt {
 	}
 
 	auto& getLoadedFonts() {
-		thread_local std::map<std::string, std::map<float, std::shared_ptr<Font>>> loaded;
+		thread_local std::map<std::string, std::map<float, Font*>> loaded;
 		return loaded;
 	}
 
 	void Content::quit() {
 		for (auto& loadedmap : getLoadedFonts()) {
 			for (auto& sizemap : loadedmap.second) {
-				sizemap.second->getSharedHandle()->reset();
-				sizemap.second->tex.getSharedHandle()->reset();
+				//sizemap.second->getSharedHandle()->reset();
+				//sizemap.second->tex.getSharedHandle()->reset();
 			}
 		}
 
@@ -53,14 +54,14 @@ namespace bt {
 		return loaded[asset];
 	}
 
-	std::shared_ptr<mainframe::render::Font> Content::getFont(const std::string& asset, float size) {
+	mainframe::render::Font* Content::getFont(const std::string& asset, unsigned int size) {
 		auto& loaded = getLoadedFonts();
 
 		auto file = std::get<std::string>(getAsset("fonts/" + asset));
 
 		auto iter = loaded.find(asset);
 		if (iter == loaded.end() || iter->second.find(size) == iter->second.end()) {
-			loaded[asset][size] = std::make_shared<Font>("fonts/" + file + ".ttf", size);
+			loaded[asset][size] = &textEngine.loadFont("fonts/" + file + ".ttf", size);
 		}
 
 		return loaded[asset][size];

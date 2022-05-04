@@ -1,7 +1,6 @@
 #include <bt/app/engine.h>
 #include <bt/world/camera.h>
 #include <mainframe/ui/element.h>
-#include <glfw/glfw3.h>
 
 namespace bt {
 	mainframe::math::Vector2 Camera::worldToScreen(const mainframe::math::Vector2& worldpos) {
@@ -39,8 +38,8 @@ namespace bt {
 			location += mousePos - newscreenpos;
 		};
 
-		scene.onMousePress += [this](const mainframe::math::Vector2i& mousePos, unsigned int button, mainframe::ui::ModifierKey mods, bool pressed) {
-			movingMap = pressed;
+		scene.onMousePress += [this](const mainframe::math::Vector2i& mousePos, unsigned int button, mainframe::ui::ModifierKey mods, mainframe::ui::MouseState state) {
+			movingMap = state == mainframe::ui::MouseState::active;
 			oldMovePos = mousePos;
 		};
 
@@ -51,11 +50,11 @@ namespace bt {
 			oldMovePos = mousePos;
 		};
 
-		scene.onKeyPress += [this](unsigned int key, unsigned int scancode, mainframe::ui::ModifierKey mods, unsigned int action) {
+		scene.onKeyPress += [this](unsigned int key, unsigned int scancode, mainframe::ui::ModifierKey mods, mainframe::ui::KeyState action) {
 			auto& mapping = BromTron::getConfig().mapping;
 
 			KeyMapping comboPressed = {key, mods};
-			if (action >= 1) {
+			if (action >= mainframe::ui::KeyState::active) {
 				// to start moving a press combo must match
 				if (comboPressed == mapping.camMoveUp) moveDirections[0] = true;
 				if (comboPressed == mapping.camMoveRight) moveDirections[1] = true;

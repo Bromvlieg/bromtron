@@ -126,13 +126,16 @@ namespace bt {
 		std::string name;
 	};
 
+
 	void World::loadGame(const ApiLobby& lobby) {
 		auto& game = BromTron::getGame();
 		icons.setStyle(game.config.ui.iconSheetSize, mainframe::render::Colors::White, game.stencil);
 		iconsShadows.setStyle(game.config.ui.iconSheetSize, mainframe::render::Colors::Black, game.stencil);
 
-		apiCallLoadGame = game.api.getMap(lobby.id, [this](ApiMap& map, const std::string& errMsg) {
-			BromTron::getGame().scene->invoke([this, map, errMsg]() {
+		apiCallLoadGame = game.api.getMap(lobby.id, [this, lobby](ApiMap map, const std::string& errMsg) {
+			BromTron::getGame().scene->invoke([this, map, errMsg, lobby]() {
+				config = lobby.conf;
+
 				syncPlayers(map.players);
 				syncStars(map.stars);
 				syncCarriers(map.carriers);
@@ -147,7 +150,7 @@ namespace bt {
 					auto& ply = p.second;
 
 					size_t techscore = 0;
-					techscore += ply.tech * 5;
+					techscore += ply.tech * 3;
 					techscore += ply.research.banking.level * 1;
 					techscore += ply.research.experimentation.level * 1;
 					techscore += ply.research.manufacturing.level * 2;
@@ -157,12 +160,12 @@ namespace bt {
 					techscore += ply.research.weapons.level * 2;
 
 					size_t powerscore = 0;
-					powerscore += static_cast<size_t>(static_cast<float>(ply.totalShips)* static_cast<float>(ply.research.weapons.level) * 0.25f);
-					powerscore += static_cast<size_t>(static_cast<float>(ply.industry)* (static_cast<float>(ply.research.terraforming.level) / 3.0f));
+					powerscore += static_cast<size_t>(static_cast<float>(ply.totalShips) * static_cast<float>(ply.research.weapons.level) * 0.25f);
+					powerscore += static_cast<size_t>(static_cast<float>(ply.industry) * (static_cast<float>(ply.research.terraforming.level) / 3.0f));
 
 
 					size_t ecoscore = 0;
-					ecoscore += static_cast<size_t>(static_cast<float>(ply.economy)* (static_cast<float>(ply.research.banking.level) / 4.00f));
+					ecoscore += static_cast<size_t>(static_cast<float>(ply.economy) + (static_cast<float>(ply.research.banking.level) / 4.00f));
 
 					if (static_cast<float>(ecoscore) > maxEco) maxEco = static_cast<float>(ecoscore);
 					if (static_cast<float>(techscore) > maxTech) maxTech = static_cast<float>(techscore);
@@ -175,7 +178,7 @@ namespace bt {
 						0.0f,
 						ply.name});
 
-					printf("ply '%s', uid %d, hud %d, \n", ply.name.c_str(), ply.uid, ply.huid);
+					printf("ply '%s', uid %lld, hud %lld, \n", ply.name.c_str(), ply.uid, ply.huid);
 				}
 
 				for (auto& s : scores) {
@@ -190,7 +193,7 @@ namespace bt {
 				});
 
 				for (auto& s : scores) {
-					printf("ply '%s' with %d\n", s.name.c_str(), s.tech);
+					printf("ply '%s' with %lld\n", s.name.c_str(), s.tech);
 				}
 
 
@@ -199,7 +202,7 @@ namespace bt {
 					return left.eco > right.eco;
 				});
 				for (auto& s : scores) {
-					printf("ply '%s' with %d\n", s.name.c_str(), s.eco);
+					printf("ply '%s' with %lld\n", s.name.c_str(), s.eco);
 				}
 
 				printf("\npower\n");
@@ -208,7 +211,7 @@ namespace bt {
 				});
 
 				for (auto& s : scores) {
-					printf("ply '%s' with %d\n", s.name.c_str(), s.power);
+					printf("ply '%s' with %lld\n", s.name.c_str(), s.power);
 				}
 
 				printf("\ntotal\n");

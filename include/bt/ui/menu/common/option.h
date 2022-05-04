@@ -12,7 +12,7 @@ namespace bt {
 	class MenuOption : public MenuBase {
 		mainframe::math::Vector2i boxSize;
 
-		std::shared_ptr<mainframe::render::Font> font;
+		mainframe::render::Font* font = nullptr;
 		std::shared_ptr<mainframe::ui::ScrollPanel> pnlBack;
 		std::vector<std::shared_ptr<ElmOption>> options;
 

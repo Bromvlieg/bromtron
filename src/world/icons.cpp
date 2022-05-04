@@ -34,7 +34,7 @@ namespace bt {
 	void IconSheet::generateIconCircle(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col) {
 		stencil.recordStart(true);
 
-		stencil.drawCircleOutlined(0, size, 48, borderSize, col);
+		stencil.drawCircleOutline(0, size, 48, borderSize, col);
 
 		stencil.draw();
 		recordings[Icon::circle] = stencil.recordStop();
@@ -52,7 +52,7 @@ namespace bt {
 	void IconSheet::generateIconhexagon(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col) {
 		stencil.recordStart(true);
 
-		stencil.drawCircleOutlined(0, size, 6, borderSize, col);
+		stencil.drawCircleOutline(0, size, 6, borderSize, col);
 
 		stencil.draw();
 		recordings[Icon::hexagon] = stencil.recordStop();
@@ -61,7 +61,7 @@ namespace bt {
 	void IconSheet::generateIconTriangle(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col) {
 		stencil.recordStart(true);
 
-		stencil.drawCircleOutlined(0, size, 3, borderSize, col);
+		stencil.drawCircleOutline(0, size, 3, borderSize, col);
 
 		stencil.draw();
 		recordings[Icon::triangle] = stencil.recordStop();
@@ -70,7 +70,7 @@ namespace bt {
 	void IconSheet::generateIconDiamond(mainframe::render::Stencil& stencil, float size, const mainframe::render::Color& col) {
 		stencil.recordStart(true);
 
-		stencil.drawCircleOutlined(0, size, 4, borderSize, col);
+		stencil.drawCircleOutline(0, size, 4, borderSize, col);
 
 		stencil.draw();
 		recordings[Icon::diamond] = stencil.recordStop();

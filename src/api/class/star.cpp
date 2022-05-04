@@ -8,7 +8,11 @@ namespace bt {
 
 		j.at("uid").get_to(obj.uid);
 		j.at("puid").get_to(obj.puid);
-		obj.location = {std::stof(j.at("x").get<std::string>()), std::stof(j.at("y").get<std::string>())};
+
+		obj.location = {
+			std::stof(j.at("x").get<std::string>()),
+			std::stof(j.at("y").get<std::string>())
+		};
 
 		if (!obj.visible) return;
 		j.at("r").get_to(obj.resources);
@@ -19,6 +23,6 @@ namespace bt {
 		j.at("e").get_to(obj.economy);
 
 		j.at("st").get_to(obj.ships);
-		j.at("nr").get_to(obj.nr);
+		j.at("nr").get_to(obj.resourcesNatural);
 	}
 }

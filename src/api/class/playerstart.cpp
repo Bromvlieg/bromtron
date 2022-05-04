@@ -6,9 +6,9 @@ namespace bt {
 		j.at("startingCash").get_to(obj.money);
 		j.at("startingShips").get_to(obj.ships);
 
-		j.at("developmentCostScience").get_to(obj.tech);
-		j.at("developmentCostEconomy").get_to(obj.economy);
-		j.at("developmentCostIndustry").get_to(obj.industry);
+		j.at("developmentCostScience").get_to(obj.techCost);
+		j.at("developmentCostEconomy").get_to(obj.economyCost);
+		j.at("developmentCostIndustry").get_to(obj.industryCost);
 
 		j.at("startingInfScience").get_to(obj.buildTech);
 		j.at("startingInfEconomy").get_to(obj.buildEconomy);

@@ -7,7 +7,7 @@ namespace bt {
 	class MenuLogin : public MenuBase {
 		mainframe::math::Vector2i boxSize;
 
-		std::shared_ptr<mainframe::render::Font> font;
+		mainframe::render::Font* font = nullptr;
 		std::string text;
 		mainframe::math::Vector2i textSize;
 		std::string eventName;

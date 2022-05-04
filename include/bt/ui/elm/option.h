@@ -5,7 +5,7 @@
 namespace bt {
 	class ElmOption : public Button {
 		std::string icon;
-		std::shared_ptr<mainframe::render::Font> fontIcon;
+		mainframe::render::Font* fontIcon = nullptr;
 		void* ptr = nullptr;
 		bool selected = false;
 
@@ -19,8 +19,8 @@ namespace bt {
 		template<class T>
 		T* getUserObject() { return reinterpret_cast<T*>(ptr); }
 
-		void setIconFont(const std::shared_ptr<mainframe::render::Font>& font);
-		const std::shared_ptr<mainframe::render::Font>& getIconFont();
+		void setIconFont(mainframe::render::Font* font);
+		mainframe::render::Font* getIconFont();
 		void setIcon(const std::string& str);
 		void setSelected(bool sel);
 		bool getSelected();

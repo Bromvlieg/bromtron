@@ -18,6 +18,8 @@ namespace bt {
 		std::string name;
 		mainframe::render::Color color;
 
+		ApiMapResearch tech;
+
 		void load(const ApiPlayer& star);
 
 		void update();

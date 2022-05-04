@@ -17,15 +17,15 @@ namespace bt {
 		bool visible = false;
 
 		// below fields only present if visible
-		size_t tech = 0;
-		size_t economy = 0;
-		size_t industry = 0;
+		int tech = 0;
+		int economy = 0;
+		int industry = 0;
 
-		size_t ships = 0;
-		size_t carriers = 0;
-		size_t resources = 0;
+		int ships = 0;
+		int carriers = 0;
+		int resources = 0;
 
-		size_t nr = 0; // ??
+		int resourcesNatural = 0;
 	};
 	void from_json(const nlohmann::json& j, ApiStar& obj);
 }

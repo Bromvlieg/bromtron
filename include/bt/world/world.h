@@ -29,6 +29,7 @@ namespace bt {
 	public:
 		IconSheet icons;
 		IconSheet iconsShadows;
+		ApiLobbyConfig config;
 
 		std::shared_ptr<Star> getStar(size_t uid);
 		std::shared_ptr<Player> getPlayer(size_t uid);

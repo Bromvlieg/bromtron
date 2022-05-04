@@ -11,12 +11,13 @@ namespace bt {
 		mainframe::render::Color(0.9f, 0.5f, 0.1f), // orange
 		mainframe::render::Color(0.9f, 0.0f, 0.0f), // red
 		mainframe::render::Color(1.0f, 0.2f, 0.6f), // pink
-		mainframe::render::Color(0.8f, 0.1f, 1.0f), // purple
+		mainframe::render::Color(0.6f, 0.1f, 1.0f), // purple
 	};
 
 	void Player::load(const ApiPlayer& ply) {
-		name = ply.name;
 		uid = ply.uid;
+		name = ply.name;
+		tech = ply.research;
 
 		auto& conf = BromTron::getConfig().ui;
 

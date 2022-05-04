@@ -38,19 +38,19 @@ namespace bt {
 
 		auto spos = BromTron::getCam().worldToScreen(location);
 
-		Order* currentOrder = nullptr;
-		if (!orders.empty()) {
-			auto& order = orders.front();
-			currentOrder = &order;
-
+		Order* currentOrder = !orders.empty() ? &orders.front() : nullptr;
+		mainframe::math::Vector2 oldPos = spos;
+		for (auto& order : orders) {
 			auto starpos = BromTron::getCam().worldToScreen(order.star->location);
 
 			mainframe::render::Color backcol = {0.9f, 0.9f, 0.9f, 0.6f};
-			stencil.drawLine(spos, starpos, conf.iconCarrierSize / 4, backcol);
+			stencil.drawLine(oldPos, starpos, conf.iconCarrierSize / 4, backcol);
 
 			auto plycol = owner->color;
 			plycol.a = 0.6f;
-			stencil.drawLine(spos, starpos, conf.iconCarrierSize / 8, plycol);
+			stencil.drawLine(oldPos, starpos, conf.iconCarrierSize / 8, plycol);
+
+			oldPos = starpos;
 		}
 
 		float angle = currentOrder == nullptr ? 0 : location.angle(currentOrder->star->location) - mainframe::numbers::pi<float> / 4;

@@ -21,7 +21,7 @@ namespace bt {
 		lines.clear();
 		sizes.clear();
 
-		auto& font = getFont();
+		auto font = getFont();
 		auto strrem = getText();
 		auto size = font->getStringSize(strrem);
 		auto maxW = getSize().x + getBorderSize();
@@ -97,7 +97,7 @@ namespace bt {
 	void Button::drawText(mainframe::render::Stencil& stencil) {
 		auto size = getSize();
 		auto start = size / 2;
-		auto& font = getFont();
+		auto font = getFont();
 
 		start.y -= lines.size() * font->getLineHeight() / 2;
 
@@ -106,7 +106,7 @@ namespace bt {
 			auto& cursize = sizes[i];
 
 			stencil.drawText(*getFont(), curpart, start - mainframe::math::Vector2i(cursize.x / 2, 0), getColor());
-			start.y += font->getLineHeight() + font->getLineGap();
+			start.y += font->getLineHeight() + font->lineGap();
 		}
 	}
 

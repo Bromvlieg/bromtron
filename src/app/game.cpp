@@ -29,6 +29,9 @@ namespace bt {
 
 		MenuBase::initMenus(*this);
 		MenuBase::switchMenu(Menus::login);
+
+		setFPS(60);
+		setTPS(10);
 	}
 
 	void bt::Game::setWindow(std::unique_ptr<Window>& w) {
@@ -40,7 +43,9 @@ namespace bt {
 		camera.hookScene(*scene);
 	}
 
-	void Game::draw() {
+	void Game::draw(const double alpha) {
+		Window::pollEvents();
+
 		auto wsize = Vector2(stencil.getWindowSize());
 		stencil.drawPolygon({
 			{
@@ -62,18 +67,14 @@ namespace bt {
 		window->swapBuffer();
 	}
 
-	void Game::tick() {
-		Window::pollEvents();
-	}
-
 	void Game::quit() {
 		api.stopThread();
 		Engine::quit();
 		window->close();
 	}
 
-	void Game::update() {
-		scene->update();
+	void Game::update(float deltaTime, long long gameTime) {
+		scene->update(deltaTime);
 		camera.update();
 
 		world.update();

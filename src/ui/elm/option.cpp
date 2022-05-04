@@ -13,11 +13,11 @@ namespace bt {
 		setIconFont(Content::getFont("fa-solid", 38));
 	}
 
-	const std::shared_ptr<mainframe::render::Font>& ElmOption::getIconFont() {
+	mainframe::render::Font* ElmOption::getIconFont() {
 		return fontIcon;
 	}
 
-	void ElmOption::setIconFont(const std::shared_ptr<mainframe::render::Font>& font) {
+	void ElmOption::setIconFont(mainframe::render::Font* font) {
 		fontIcon = font;
 	}
 
