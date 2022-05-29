@@ -2,16 +2,30 @@
 
 namespace bt {
 	void from_json(const nlohmann::json& j, ApiMap& obj) {
-		j.at("fleet_speed").get_to(obj.fleetSpeed);
-		j.at("productions").get_to(obj.cycles);
+		j.at("name").get_to(obj.name);
+
+		j.at("admin").get_to(obj.adminUid);
+		j.at("player_uid").get_to(obj.mapRequestedByPlayer);
+		j.at("tick").get_to(obj.tick);
+		j.at("tick_rate").get_to(obj.tickRate);
 		j.at("tick_fragment").get_to(obj.tickFragment);
 		j.at("now").get_to(obj.now);
+		j.at("total_stars").get_to(obj.starsTotal);
 		j.at("stars_for_victory").get_to(obj.starsForVictory);
+		j.at("turn_based_time_out").get_to(obj.turnBasedTimeout);
+		j.at("start_time").get_to(obj.startTime);
+		j.at("productions").get_to(obj.productions);
+		j.at("production_rate").get_to(obj.productionRate);
+		j.at("production_counter").get_to(obj.productionCounter);
+		j.at("trade_cost").get_to(obj.tradeCost);
 
 		j.at("stars").get_to(obj.stars);
 		j.at("fleets").get_to(obj.carriers);
 		j.at("players").get_to(obj.players);
 
+		j.at("fleet_speed").get_to(obj.fleetSpeed);
+
+		obj.turnBased = j.at("turn_based") == 1;
 		obj.started = j.at("started") == 1;
 		obj.paused = j.at("paused") == 1;
 		obj.gameOver = j.at("game_over") == 1;

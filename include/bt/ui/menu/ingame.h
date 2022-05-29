@@ -11,6 +11,7 @@ namespace bt {
 		std::shared_ptr<Button> btnMail;
 
 	public:
+		virtual bool hitTest(const mainframe::math::Vector2i& mousePos);
 		virtual void init() override;
 		virtual void recreateElements() override;
 	};

@@ -7,13 +7,18 @@ using namespace mainframe::render;
 
 namespace bt {
 	void MenuIngame::init() {
-
 	}
 
 	void MenuIngame::recreateElements() {
 		this->clearChildren();
 
+
+
 		auto& oursize = getSize();
 		applyTheme();
+	}
+
+	bool MenuIngame::hitTest(const Vector2i& mousePos) {
+		return false;
 	}
 }

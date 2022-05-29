@@ -1,5 +1,9 @@
 #include <bt/world/world.h>
 #include <bt/app/engine.h>
+#include <bt/misc/texttable.h>
+
+using namespace mainframe::math;
+using namespace mainframe::render;
 
 namespace bt {
 	void World::syncStars(const std::map<std::string, ApiStar> starlst) {
@@ -122,6 +126,7 @@ namespace bt {
 		size_t tech = 0;
 		size_t power = 0;
 		size_t eco = 0;
+		size_t planets = 0;
 		float total = 0;
 		std::string name;
 	};
@@ -145,6 +150,7 @@ namespace bt {
 				float maxTech = 0;
 				float maxEco = 0;
 				float maxPower = 0;
+				float maxPlanets = 0;
 
 				for (auto& p : map.players) {
 					auto& ply = p.second;
@@ -170,61 +176,113 @@ namespace bt {
 					if (static_cast<float>(ecoscore) > maxEco) maxEco = static_cast<float>(ecoscore);
 					if (static_cast<float>(techscore) > maxTech) maxTech = static_cast<float>(techscore);
 					if (static_cast<float>(powerscore) > maxPower) maxPower = static_cast<float>(powerscore);
+					if (static_cast<float>(ply.totalStars) > maxPlanets) maxPlanets = static_cast<float>(ply.totalStars);
 
 					scores.push_back({
 						techscore,
 						powerscore,
 						ecoscore,
+						ply.totalStars,
 						0.0f,
-						ply.name});
+						ply.name
+					});
 
-					printf("ply '%s', uid %lld, hud %lld, \n", ply.name.c_str(), ply.uid, ply.huid);
+					printf("ply '%s', uid %lld, hud %lld, skipped turns %lld \n", ply.name.c_str(), ply.uid, ply.huid, ply.turnsMissed);
 				}
 
 				for (auto& s : scores) {
 					s.total = static_cast<float>(s.tech) / maxTech +
 						static_cast<float>(s.eco) / maxEco +
-						static_cast<float>(s.power) / maxPower;
-				}
-
-				printf("\ntech\n");
-				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) {
-					return left.tech > right.tech;
-				});
-
-				for (auto& s : scores) {
-					printf("ply '%s' with %lld\n", s.name.c_str(), s.tech);
+						static_cast<float>(s.power) / maxPower +
+						static_cast<float>(s.planets) / maxPlanets;
 				}
 
 
-				printf("\neconomy\n");
-				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) {
-					return left.eco > right.eco;
-				});
-				for (auto& s : scores) {
-					printf("ply '%s' with %lld\n", s.name.c_str(), s.eco);
+				TextTable tableAll('-', '|', '+');
+				tableAll.setAlignment(2, TextTable::Alignment::RIGHT);
+				tableAll.add("");
+				tableAll.add("technology ranking");
+				tableAll.add("");
+				tableAll.add("");
+				tableAll.add("");
+				tableAll.add("economy ranking");
+				tableAll.add("");
+				tableAll.add("");
+				tableAll.add("");
+				tableAll.add("military ranking");
+				tableAll.add("");
+				tableAll.endOfRow();
+
+				tableAll.add("nr");
+				tableAll.add("name");
+				tableAll.add("score");
+				tableAll.add("");
+				tableAll.add("nr");
+				tableAll.add("name");
+				tableAll.add("score");
+				tableAll.add("");
+				tableAll.add("nr");
+				tableAll.add("name");
+				tableAll.add("score");
+				tableAll.endOfRow();
+
+				TextTable tableTotal('-', '|', '+');
+				tableTotal.setAlignment(2, TextTable::Alignment::RIGHT);
+				tableTotal.add("total score ranking");
+				tableTotal.add("name");
+				tableTotal.add("combined");
+				tableTotal.add("eco");
+				tableTotal.add("tech");
+				tableTotal.add("power");
+				tableTotal.add("planets");
+				tableTotal.endOfRow();
+
+				auto scoresTech = scores;
+				auto scoresEco = scores;
+				auto scoresPwr = scores;
+				std::sort(scoresTech.begin(), scoresTech.end(), [&](const auto& left, const auto& right) { return left.tech > right.tech; });
+				std::sort(scoresEco.begin(), scoresEco.end(), [&](const auto& left, const auto& right) { return left.eco > right.eco; });
+				std::sort(scoresPwr.begin(), scoresPwr.end(), [&](const auto& left, const auto& right) { return left.power > right.power; });
+
+				for (size_t i = 0; i < scores.size(); i++) {
+					auto& st = scoresTech[i];
+					auto& se = scoresEco[i];
+					auto& sp = scoresPwr[i];
+
+					tableAll.add(std::to_string(i + 1));
+					tableAll.add(st.name.c_str());
+					tableAll.add(std::to_string(st.tech));
+
+					tableAll.add("---");
+					tableAll.add(std::to_string(i + 1));
+					tableAll.add(se.name.c_str());
+					tableAll.add(std::to_string(se.eco));
+
+					tableAll.add("---");
+					tableAll.add(std::to_string(i + 1));
+					tableAll.add(sp.name.c_str());
+					tableAll.add(std::to_string(sp.power));
+
+					tableAll.endOfRow();
 				}
 
-				printf("\npower\n");
-				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) {
-					return left.power > right.power;
-				});
-
-				for (auto& s : scores) {
-					printf("ply '%s' with %lld\n", s.name.c_str(), s.power);
+				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) { return left.total > right.total; });
+				for (size_t i = 0; i < scores.size(); i++) {
+					auto& s = scores[i];
+					tableTotal.add(std::to_string(i));
+					tableTotal.add(s.name.c_str());
+					tableTotal.add(std::to_string(s.total));
+					tableTotal.add(std::to_string(s.eco));
+					tableTotal.add(std::to_string(s.tech));
+					tableTotal.add(std::to_string(s.power));
+					tableTotal.add(std::to_string(s.planets));
+					tableTotal.endOfRow();
 				}
 
-				printf("\ntotal\n");
-				std::sort(scores.begin(), scores.end(), [&](const auto& left, const auto& right) {
-					return left.total > right.total;
-				});
-
-				for (auto& s : scores) {
-					printf("ply '%s' with %f\n", s.name.c_str(), s.total);
-				}
-
-
-				printf("done loading :)\n");
+				printf("\n\nTICK %lld\n", map.tick);
+				std::cout << tableAll;
+				std::cout << tableTotal;
+				printf("\ndone loading\n");
 			});
 		});
 	}
