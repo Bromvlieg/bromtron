@@ -303,6 +303,16 @@ namespace bt {
 		auto tmpCarriers = carriers;
 		lock.unlock();
 
+		auto& game = BromTron::getGame();
+		
+		mainframe::math::Vector2 up = game.camera.worldToScreen({ 0, -10 }).clampVec({}, stencil.getWindowSize());
+		mainframe::math::Vector2 left = game.camera.worldToScreen({-10, 0}).clampVec({}, stencil.getWindowSize());
+
+		auto& conf = game.config.ui;
+		auto width = 3.0f;
+		stencil.drawBox({up.x, 0}, Vector2(width, stencil.getWindowSize().y), Colors::DarkGray);
+		stencil.drawBox({0, left.y}, Vector2(stencil.getWindowSize().x, width), Colors::DarkGray);
+
 		for (auto& obj : tmpStars) obj->draw(stencil);
 		for (auto& obj : tmpCarriers) obj->draw(stencil);
 
