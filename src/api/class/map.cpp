@@ -32,4 +32,29 @@ namespace bt {
 		obj.tradeScanned = j.at("trade_scanned") == 1;
 		obj.war = j.at("war") == 1;
 	}
+
+	float fixed2(float val) {
+		int c = (int)(val * 100 + .5);
+		return c / 100.0;
+	}
+
+	float ApiMap::getTotalShipsPerTick(const ApiPlayer& ply) const {
+		auto construction_rate = static_cast<float>(ply.industry) * (5.0f + static_cast<float>(ply.research.manufacturing.level));
+		auto spt = construction_rate / static_cast<float>(productionRate);
+		if (spt != std::roundf(spt)) {
+			spt = fixed2(spt);
+		}
+
+		return spt;
+	}
+
+	float ApiMap::getTotalShipsPerTick(const ApiIntelPlayer& ply) const {
+		auto construction_rate = static_cast<float>(ply.totalIndustry) * (5.0f + static_cast<float>(ply.manufacturing));
+		auto spt = construction_rate / static_cast<float>(productionRate);
+		if (spt != std::roundf(spt)) {
+			spt = fixed2(spt);
+		}
+
+		return spt;
+	}
 }

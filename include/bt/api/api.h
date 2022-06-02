@@ -13,6 +13,7 @@
 #include <nlohmann/json.hpp>
 #include <bt/api/class/localplayer.h>
 #include <bt/api/class/map.h>
+#include <bt/api/class/intel.h>
 
 namespace bt {
 	namespace downloader_funcs {
@@ -73,5 +74,8 @@ namespace bt {
 
 		using CallbackMap = mainframe::utils::EventNamed<ApiMap, const std::string&>::Func;
 		std::shared_ptr<ApiHandle> getMap(const std::string& mapId, CallbackMap callback);
+
+		using CallbackIntel = mainframe::utils::EventNamed<ApiIntel, const std::string&>::Func;
+		std::shared_ptr<ApiHandle> getIntel(const std::string& mapId, CallbackIntel callback);
 	};
 }

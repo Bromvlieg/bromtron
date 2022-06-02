@@ -22,7 +22,7 @@ namespace bt {
 
 		size_t totalStars = 0;
 		size_t totalCarriers = 0;
-		size_t totalShips = 0;
+		int totalShips = 0;
 
 		size_t turnsMissed = 0;
 		size_t karmaToGive = 0;

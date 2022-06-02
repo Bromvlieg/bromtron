@@ -6,6 +6,7 @@
 #include <bt/api/class/player.h>
 #include <bt/api/class/star.h>
 #include <bt/api/class/carrier.h>
+#include <bt/api/class/intel.h>
 #include <mainframe/math/vector3.h>
 
 namespace bt {
@@ -41,6 +42,9 @@ namespace bt {
 		bool gameOver = false;
 		bool tradeScanned = false;
 		bool war = false; // ???
+
+		float getTotalShipsPerTick(const ApiPlayer& ply) const;
+		float getTotalShipsPerTick(const ApiIntelPlayer& ply) const;
 	};
 	void from_json(const nlohmann::json& j, ApiMap& obj);
 }

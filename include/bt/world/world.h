@@ -21,6 +21,7 @@ namespace bt {
 		std::vector<std::shared_ptr<Player>> players;
 
 		std::shared_ptr<Api::ApiHandle> apiCallLoadGame;
+		std::shared_ptr<Api::ApiHandle> apiCallIntel;
 
 		void syncStars(const std::map<std::string, ApiStar> starlst);
 		void syncPlayers(const std::map<std::string, ApiPlayer> playerlst);
