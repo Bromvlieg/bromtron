@@ -1,4 +1,5 @@
 #include <bt/ui/menu/login.h>
+#include <bt/ui/menu/scoreboard/scoreboard.h>
 #include <bt/ui/menu/common/option.h>
 #include <bt/misc/content.h>
 #include <bt/misc/fontawesome.h>
@@ -42,6 +43,12 @@ namespace bt {
 				remove();
 
 				BromTron::getWorld().loadGame(ply.gamesOpen[0]);
+
+				auto scoreboard = BromTron::getGame().scene->createChild<MenuScoreboard>();
+				scoreboard->init();
+				scoreboard->setSize({1024, 800});
+				scoreboard->recreateElements();
+				scoreboard->show();
 			});
 		});
 	}
