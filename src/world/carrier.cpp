@@ -41,7 +41,8 @@ namespace bt {
 		Order* currentOrder = !orders.empty() ? &orders.front() : nullptr;
 		mainframe::math::Vector2 oldPos = spos;
 		for (auto& order : orders) {
-			auto starpos = BromTron::getCam().worldToScreen(order.star->location);
+			if (!order.star) continue;
+			auto starpos = BromTron::getCam().worldToScreen(order.star == nullptr ? spos : order.star->location);
 
 			mainframe::render::Color backcol = {0.9f, 0.9f, 0.9f, 0.6f};
 			stencil.drawLine(oldPos, starpos, conf.iconCarrierSize / 4, backcol);
@@ -53,7 +54,7 @@ namespace bt {
 			oldPos = starpos;
 		}
 
-		float angle = currentOrder == nullptr ? 0 : location.angle(currentOrder->star->location) - mainframe::numbers::pi<float> / 4;
+		float angle = currentOrder == nullptr ? 0 : location.angle(currentOrder->star == nullptr ? location : currentOrder->star->location) - mainframe::numbers::pi<float> / 4;
 
 		stencil.drawRecording(game.world.iconsShadows.getIcon(Icon::carrier), spos - conf.iconCarrierSize * conf.iconCarrierShadowScale / 2, conf.iconCarrierSize * conf.iconCarrierShadowScale / conf.iconSheetSize, angle, conf.iconCarrierSize * conf.iconCarrierShadowScale / 2);
 		stencil.drawRecording(game.world.icons.getIcon(Icon::carrier), spos - conf.iconCarrierSize / 2, conf.iconCarrierSize / conf.iconSheetSize, angle, conf.iconCarrierSize / 2);
