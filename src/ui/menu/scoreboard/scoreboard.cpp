@@ -27,9 +27,9 @@ namespace bt {
 	}
 
 	void MenuScoreboard::loadIntel() {
-		for (auto const& dir_entry : std::filesystem::directory_iterator{ fmt::format("saves/{}/intel") }) {
-			std::cout << dir_entry << '\n';
-		}
+		//for (auto const& dir_entry : std::filesystem::directory_iterator{ fmt::format("saves/{}/intel") }) {
+		//	std::cout << dir_entry << '\n';
+		//}
 	}
 
 	void MenuScoreboard::recreateElements() {

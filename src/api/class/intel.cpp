@@ -26,5 +26,6 @@ namespace bt {
 
 	void from_json(const nlohmann::json& j, ApiIntel& obj) {
 		j.at("stats").get_to(obj.stats);
+		std::sort(obj.stats.begin(), obj.stats.end(), [&](const auto& left, const auto& right) { return left.tick > right.tick; });
 	}
 }

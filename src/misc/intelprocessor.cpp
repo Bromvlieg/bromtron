@@ -125,12 +125,13 @@ namespace bt {
 			techscore += ply.weapons * 2;
 
 			size_t powerscore = 0;
-			powerscore += static_cast<size_t>(static_cast<float>(ply.totalShips) * static_cast<float>(ply.weapons) * 0.25f);
-			powerscore += static_cast<size_t>(static_cast<float>(ply.totalIndustry) * (static_cast<float>(ply.terraforming) / 3.0f));
+			powerscore += static_cast<size_t>(static_cast<float>(ply.totalShips) * static_cast<float>(ply.weapons) * 0.10f);
+			powerscore += static_cast<size_t>(static_cast<float>(ply.totalIndustry) * (static_cast<float>(ply.manufacturing) * 0.10f));
 
 
 			size_t ecoscore = 0;
 			ecoscore += static_cast<size_t>(static_cast<float>(ply.totalEconomy) + (static_cast<float>(ply.banking) / 4.00f));
+			ecoscore += static_cast<size_t>(static_cast<float>(ply.terraforming) * (static_cast<float>(ply.totalStars) * 1.5f));
 
 			if (static_cast<float>(ecoscore) > maxEco) maxEco = static_cast<float>(ecoscore);
 			if (static_cast<float>(techscore) > maxTech) maxTech = static_cast<float>(techscore);
@@ -258,17 +259,20 @@ namespace bt {
 
 		std::vector<PlayerDiff> diffs;
 		for (size_t i = 0; i < statsB.players.size(); i++) {
-			auto plyNow = statsA.players[i];
-			auto plyPrev = statsB.players[i];
+			auto& plyNow = statsA.players[i];
+			auto& plyPrev = statsB.players[i];
 
 			PlayerDiff diff;
 			diff.next = plyNow;
 			diff.prev = plyPrev;
-			diff.shipsDiff = (plyPrev.totalShips + static_cast<int>(map.getTotalShipsPerTick(plyNow) * static_cast<float>(statsA.tick - statsB.tick))) - plyNow.totalShips;
+
+			auto shipsBuild = static_cast<int>(map.getTotalShipsPerTick(plyNow) * (static_cast<float>(statsA.tick) - static_cast<float>(statsB.tick)));
+			auto estimatedShips = plyPrev.totalShips + shipsBuild;
+			diff.shipsDiff = estimatedShips - plyNow.totalShips;
 
 			auto plyNowGame = game.world.getPlayer(plyNow.uid);
 			tableWar.add(plyNowGame->name);
-			tableWar.add(diff.shipsDiff > 0 ? "YES" : (diff.shipsDiff < 0 ? "maybe?" : "no"));
+			tableWar.add(diff.shipsDiff > 0 ? "YES" : "no");
 			tableWar.add(diff.shipsDiff != 0 ? std::to_string(diff.shipsDiff * -1) : std::string());
 			tableWar.add(std::to_string(plyNow.totalShips));
 			tableWar.add(plyNow.manufacturing > plyPrev.manufacturing > 0 ? "YES" : "no");
