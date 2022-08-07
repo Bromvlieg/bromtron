@@ -14,21 +14,6 @@ using namespace mainframe::math;
 using namespace mainframe::render;
 
 namespace bt {
-	struct calcScore {
-		size_t tech = 0;
-		size_t power = 0;
-		size_t eco = 0;
-		size_t planets = 0;
-		float total = 0;
-		std::string name;
-	};
-
-	struct PlayerDiff {
-		ApiIntelPlayer prev;
-		ApiIntelPlayer next;
-		std::vector<size_t> maybeWar;
-		int shipsDiff = 0;
-	};
 
 	int attackTillLost(const ApiIntelPlayer& attacker, const ApiIntelPlayer& defender, int ships) {
 		auto awt = attacker.weapons;
@@ -97,14 +82,20 @@ namespace bt {
 		return sumUpRecursive(numbers, target, {}, margin);
 	}
 
-	void IntelProcessor::process(ApiMap& map, ApiIntel& intel) {
+	void IntelProcessor::process(const ApiMap& map, ApiIntel& intel) {
 		if (intel.stats.size() < 2) return;
 
-		processTick(map, intel.stats[0]);
-		compareTick(map, intel.stats[0], intel.stats[1]);
+		auto latestTick = intel.stats[0];
+		auto scores = processTick(latestTick);
+		//compareTick(map, latestTick, intel.stats[1]);
+
+
+		printf("\n\nTICK %lld\n", latestTick.tick);
+		printScores(scores);
+		printf("\ndone loading\n");
 	}
 
-	void IntelProcessor::processTick(ApiMap& map, ApiIntelStats& stats) {
+	std::vector<calcScore> IntelProcessor::processTick(ApiIntelStats& stats) {
 		std::vector<calcScore> scores;
 
 		float maxTech = 0;
@@ -114,7 +105,7 @@ namespace bt {
 
 		auto& game = BromTron::getGame();
 		for (auto& ply : stats.players) {
-			size_t techscore = 0;
+			float techscore = 0;
 			techscore += ply.totalScience * 3;
 			techscore += ply.banking * 1;
 			techscore += ply.experimentation * 1;
@@ -124,18 +115,24 @@ namespace bt {
 			techscore += ply.terraforming * 2;
 			techscore += ply.weapons * 2;
 
-			size_t powerscore = 0;
-			powerscore += static_cast<size_t>(static_cast<float>(ply.totalShips) * static_cast<float>(ply.weapons) * 0.10f);
-			powerscore += static_cast<size_t>(static_cast<float>(ply.totalIndustry) * (static_cast<float>(ply.manufacturing) * 0.10f));
+			float powerscore = 0;
+			powerscore += static_cast<float>(ply.totalShips) * static_cast<float>(ply.weapons) * 0.10f;
+			powerscore += static_cast<float>(ply.totalIndustry) * (static_cast<float>(ply.manufacturing) * 0.10f);
 
+			float ecoscore = 0;
+			ecoscore += static_cast<float>(ply.totalEconomy) + (static_cast<float>(ply.banking) / 4.00f);
+			ecoscore += static_cast<float>(ply.terraforming) * (static_cast<float>(ply.totalStars) * 1.5f);
 
-			size_t ecoscore = 0;
-			ecoscore += static_cast<size_t>(static_cast<float>(ply.totalEconomy) + (static_cast<float>(ply.banking) / 4.00f));
-			ecoscore += static_cast<size_t>(static_cast<float>(ply.terraforming) * (static_cast<float>(ply.totalStars) * 1.5f));
+			// GG
+			if (ply.totalStars == 0) {
+				ecoscore = 0;
+				techscore = 0;
+				powerscore = 0;
+			}
 
-			if (static_cast<float>(ecoscore) > maxEco) maxEco = static_cast<float>(ecoscore);
-			if (static_cast<float>(techscore) > maxTech) maxTech = static_cast<float>(techscore);
-			if (static_cast<float>(powerscore) > maxPower) maxPower = static_cast<float>(powerscore);
+			if (ecoscore > maxEco) maxEco = ecoscore;
+			if (techscore > maxTech) maxTech = techscore;
+			if (powerscore > maxPower) maxPower = powerscore;
 			if (static_cast<float>(ply.totalStars) > maxPlanets) maxPlanets = static_cast<float>(ply.totalStars);
 
 			auto gamePly = game.world.getPlayer(ply.uid);
@@ -144,20 +141,27 @@ namespace bt {
 				techscore,
 				powerscore,
 				ecoscore,
-				ply.totalStars,
-				0.0f,
-				gamePly->name
-				});
+				static_cast<float>(ply.totalStars),
+				0,
+				0,
+				game.world.currentMap.getTotalShipsPerTick(ply),
+				gamePly->name,
+				gamePly->uid
+			});
 		}
 
 		for (auto& s : scores) {
-			s.total = static_cast<float>(s.tech) / maxTech +
-				static_cast<float>(s.eco) / maxEco +
-				static_cast<float>(s.power) / maxPower +
-				static_cast<float>(s.planets) / maxPlanets;
+			s.total = (
+					s.tech / maxTech +
+					s.eco / maxEco +
+					s.power / maxPower
+				) * s.planets / maxPlanets;
 		}
 
+		return scores;
+	}
 
+	void IntelProcessor::printScores(std::vector<calcScore> scores) {
 		TextTable tableAll('-', '|', '+');
 		tableAll.setAlignment(2, TextTable::Alignment::RIGHT);
 		tableAll.add("");
@@ -239,23 +243,23 @@ namespace bt {
 			tableTotal.endOfRow();
 		}
 
-		printf("\n\nTICK %lld\n", stats.tick);
 		std::cout << tableAll;
 		std::cout << tableTotal;
-		printf("\ndone loading\n");
 	}
 
-	void IntelProcessor::compareTick(ApiMap& map, ApiIntelStats& statsA, ApiIntelStats& statsB) {
+	std::vector<PlayerDiff> IntelProcessor::compareTick(const ApiMap& map, ApiIntelStats& statsA, ApiIntelStats& statsB, bool printInfo) {
 		auto& game = BromTron::getGame();
 
 		TextTable tableWar('-', '|', '+');
-		tableWar.setAlignment(2, TextTable::Alignment::RIGHT);
-		tableWar.add("name");
-		tableWar.add("war");
-		tableWar.add("ship counter");
-		tableWar.add("total ships");
-		tableWar.add("tech+");
-		tableWar.endOfRow();
+		if (printInfo) {
+			tableWar.setAlignment(2, TextTable::Alignment::RIGHT);
+			tableWar.add("name");
+			tableWar.add("war");
+			tableWar.add("ship counter");
+			tableWar.add("total ships");
+			tableWar.add("tech+");
+			tableWar.endOfRow();
+		}
 
 		std::vector<PlayerDiff> diffs;
 		for (size_t i = 0; i < statsB.players.size(); i++) {
@@ -270,25 +274,32 @@ namespace bt {
 			auto estimatedShips = plyPrev.totalShips + shipsBuild;
 			diff.shipsDiff = estimatedShips - plyNow.totalShips;
 
-			auto plyNowGame = game.world.getPlayer(plyNow.uid);
-			tableWar.add(plyNowGame->name);
-			tableWar.add(diff.shipsDiff > 0 ? "YES" : "no");
-			tableWar.add(diff.shipsDiff != 0 ? std::to_string(diff.shipsDiff * -1) : std::string());
-			tableWar.add(std::to_string(plyNow.totalShips));
-			tableWar.add(plyNow.manufacturing > plyPrev.manufacturing > 0 ? "YES" : "no");
-			tableWar.endOfRow();
+			if (printInfo) {
+				auto plyNowGame = game.world.getPlayer(plyNow.uid);
+				tableWar.add(plyNowGame->name);
+				tableWar.add(diff.shipsDiff > 0 ? "YES" : "no");
+				tableWar.add(diff.shipsDiff != 0 ? std::to_string(diff.shipsDiff * -1) : std::string());
+				tableWar.add(std::to_string(plyNow.totalShips));
+				tableWar.add(plyNow.manufacturing > plyPrev.manufacturing > 0 ? "YES" : "no");
+				tableWar.endOfRow();
+			}
 
 			diffs.push_back(diff);
 		}
 
 		std::sort(diffs.begin(), diffs.end(), [&](const auto& left, const auto& right) { return left.shipsDiff < right.shipsDiff; });
-		std::cout << tableWar;
+
+		if (printInfo) {
+			std::cout << tableWar;
+		}
 
 		TextTable tableFighting('-', '|', '+');
-		tableFighting.add("attacker");
-		tableFighting.add("fleet");
-		tableFighting.add("defender");
-		tableFighting.endOfRow();
+		if (printInfo) {
+			tableFighting.add("attacker");
+			tableFighting.add("fleet");
+			tableFighting.add("defender");
+			tableFighting.endOfRow();
+		}
 
 		// exact matches
 		/*
@@ -310,10 +321,12 @@ namespace bt {
 				auto shipsDestroyed = attackTillLost(ourPly, theirPly, diff1.shipsDiff); // did we attack them
 
 				if (std::fabs(shipsDestroyed - diff2.shipsDiff) <= 1) {
-					tableFighting.add(ourPly.name + (matches > 0 ? "^?^" : ""));
-					tableFighting.add(std::to_string(diff1.shipsDiff));
-					tableFighting.add(theirPly.name);
-					tableFighting.endOfRow();
+					if (printInfo) {
+						tableFighting.add(ourPly.name + (matches > 0 ? "^?^" : ""));
+						tableFighting.add(std::to_string(diff1.shipsDiff));
+						tableFighting.add(theirPly.name);
+						tableFighting.endOfRow();
+					}
 
 					diff1.maybeWar.push_back(theirPly.uid);
 					exactMatches.push_back(&diff2);
@@ -375,13 +388,15 @@ namespace bt {
 					size_t index = std::distance(ships.begin(), itr);
 					auto& diff2 = *diffsPushed[index];
 
-					auto plyDiff2Game = game.world.getPlayer(diff2.next.uid);
-					auto ourPlyGame = game.world.getPlayer(ourPly.uid);
+					if (printInfo) {
+						auto plyDiff2Game = game.world.getPlayer(diff2.next.uid);
+						auto ourPlyGame = game.world.getPlayer(ourPly.uid);
 
-					tableFighting.add(plyDiff2Game->name);
-					tableFighting.add(std::to_string(*itr));
-					tableFighting.add(ourPlyGame->name);
-					tableFighting.endOfRow();
+						tableFighting.add(plyDiff2Game->name);
+						tableFighting.add(std::to_string(*itr));
+						tableFighting.add(ourPlyGame->name);
+						tableFighting.endOfRow();
+					}
 
 					diff2.shipsDiff -= *itr;
 					diff2.maybeWar.push_back(ourPly.uid);
@@ -394,19 +409,22 @@ namespace bt {
 			}
 		}
 
-		for (auto& diff : diffs) {
-			if (diff.shipsDiff <= 0) continue;
+		if (printInfo) {
+			for (auto& diff : diffs) {
+				if (diff.shipsDiff <= 0) continue;
 
-			auto ourPlyGame = game.world.getPlayer(diff.next.uid);
+				auto ourPlyGame = game.world.getPlayer(diff.next.uid);
 
-			tableFighting.add("");
-			tableFighting.add(std::to_string(diff.shipsDiff));
-			tableFighting.add(ourPlyGame->name);
-			tableFighting.endOfRow();
+				tableFighting.add("");
+				tableFighting.add(std::to_string(diff.shipsDiff));
+				tableFighting.add(ourPlyGame->name);
+				tableFighting.endOfRow();
 
-			//diff.shipsDiff = 0;
+				//diff.shipsDiff = 0;
+			}
+
+			std::cout << tableFighting;
 		}
-
-		std::cout << tableFighting;
+		return diffs;
 	}
 }

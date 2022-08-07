@@ -32,9 +32,13 @@ namespace bt {
 		IconSheet iconsShadows;
 		ApiLobbyConfig config;
 
+		ApiMap currentMap;
+
 		std::shared_ptr<Star> getStar(size_t uid);
 		std::shared_ptr<Player> getPlayer(size_t uid);
 		std::shared_ptr<Carrier> getCarrier(size_t uid);
+
+		std::vector<std::shared_ptr<Player>> getPlayers();
 
 		void loadGame(const ApiLobby& lobby);
 

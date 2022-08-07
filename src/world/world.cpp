@@ -10,6 +10,7 @@
 #include <fmt/format.h>
 #include <iostream>
 #include <fstream>
+#include <bt/ui/menu/scoreboard/scoreboard.h>
 
 using namespace mainframe::math;
 using namespace mainframe::render;
@@ -107,6 +108,11 @@ namespace bt {
 		return {};
 	}
 
+	std::vector<std::shared_ptr<Player>> World::getPlayers() {
+		const std::lock_guard<std::mutex> lockguard(lock); 
+		return players;
+	}
+
 	std::shared_ptr<Player> World::getPlayer(size_t uid) {
 		const std::lock_guard<std::mutex> lockguard(lock);
 
@@ -172,6 +178,7 @@ namespace bt {
 		apiCallLoadGame = game.api.getMap(lobby.id, [&game, this, lobby](ApiMap map, const std::string& errMsg) {
 			BromTron::getGame().scene->invoke([this, &game, map, errMsg, lobby]() {
 				config = lobby.conf;
+				currentMap = map;
 
 				syncPlayers(map.players);
 				syncStars(map.stars);
@@ -182,9 +189,17 @@ namespace bt {
 					printf("ply '%s', uid %lld, hud %lld, skipped turns %lld \n", ply.name.c_str(), ply.uid, ply.huid, ply.turnsMissed);
 				}
 
-				apiCallIntel = game.api.getIntel(lobby.id, [this, map, lobby](ApiIntel intel, const std::string& errMsg) {
-					auto mapCpy = map;
-					IntelProcessor::process(mapCpy, intel);
+				apiCallIntel = game.api.getIntel(lobby.id, [this, &game, map, lobby](ApiIntel intel, const std::string& errMsg) {
+					IntelProcessor::process(map, intel);
+
+					BromTron::getGame().scene->invoke([this, &game, map, errMsg, lobby]() {
+						auto scoreboard = BromTron::getGame().scene->createChild<MenuScoreboard>();
+						scoreboard->init();
+						scoreboard->setSize({ 1920, 1080 });
+						scoreboard->recreateElements();
+						scoreboard->loadIntel(map.id);
+						scoreboard->show();
+					});
 				});
 			});
 		});

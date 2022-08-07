@@ -19,6 +19,6 @@ namespace bt {
 		auto& size = getSize();
 
 		stencil.drawBoxOutlined(0, size, 1, Colors::Black);
-		stencil.drawBox(1, size - 2, Color(255, 255, 255, 217));
+		stencil.drawBox(1, size - 2, { 0.1, 0.1, 0.1, 1 });
 	}
 }

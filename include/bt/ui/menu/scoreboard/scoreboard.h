@@ -19,8 +19,14 @@ namespace bt {
 		std::shared_ptr<PlayerList> uiPlayers;
 		std::shared_ptr<TimeSelector> uiTimeSelector;
 
+		ScoreboardCategory catType = ScoreboardCategory::total;
+		std::map<size_t, bool> disabled;
+		std::vector<ApiIntelStats> mapping;
+
+		void refreshValues();
+
 	public:
-		void loadIntel();
+		void loadIntel(std::string mapId);
 
 		virtual void init() override;
 		virtual void draw(mainframe::render::Stencil& stencil) override;

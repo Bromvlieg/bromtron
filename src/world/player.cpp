@@ -22,6 +22,12 @@ namespace bt {
 		auto& conf = BromTron::getConfig().ui;
 
 		color = Colors[uid - uid / 8 * 8];
+		if (uid > 7) {
+			color.r = color.r / 3 * 2;
+			color.g = color.g / 3 * 2;
+			color.b = color.b / 3 * 2;
+		}
+
 		icons.setStyle(conf.iconSheetSize, color, BromTron::getGame().stencil);
 	}
 
