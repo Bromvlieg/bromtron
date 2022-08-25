@@ -35,7 +35,7 @@ namespace bt {
 
 	float fixed2(float val) {
 		int c = (int)(val * 100 + .5);
-		return c / 100.0;
+		return static_cast<float>(c) / 100.0f;
 	}
 
 	float ApiMap::getTotalShipsPerTick(const ApiPlayer& ply) const {

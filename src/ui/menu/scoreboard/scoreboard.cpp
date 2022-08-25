@@ -89,7 +89,7 @@ namespace bt {
 
 				for (size_t diffIndex = 0; diffIndex < diffs.size(); diffIndex++) {
 					if (diffs[diffIndex].shipsDiff > 0) continue;
-					scores[diffIndex].shipsLost = diffs[diffIndex].shipsDiff;
+					scores[diffIndex].shipsLost = -diffs[diffIndex].shipsDiff;
 				}
 
 				uiGraph->setSmooth(false);

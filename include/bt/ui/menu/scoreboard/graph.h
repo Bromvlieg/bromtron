@@ -3,6 +3,11 @@
 #include <mainframe/ui/element.h>
 
 namespace bt {
+	enum class GraphStyle {
+		wave,
+		line
+	};
+
 	struct GraphDataset {
 		std::string name;
 		std::vector<float> values;
@@ -20,6 +25,7 @@ namespace bt {
 
 		std::vector<std::string> labels;
 		std::vector<GraphDataset> datasets;
+		GraphStyle style = GraphStyle::line;
 		bool dirty = false;
 		bool smooth = false;
 		size_t totalValueEntries = 0;
@@ -37,13 +43,17 @@ namespace bt {
 		mainframe::math::Vector2 offset1 = { 0, 1 };
 		mainframe::math::Vector2 offset2 = { 1, 0 };
 
-		void preRender();
-		void preRenderMouse(int x);
+		void preRenderWave();
+		void preRenderMouseWave(int x);
+
+		void preRenderLine();
+		void preRenderMouseLine(int x);
 
 	public:
 		Graph();
 
 		void refresh();
+		void refreshMouse(int x);
 		void clearDatasets();
 
 		void setSmooth(bool smoothMode);

@@ -30,6 +30,8 @@ namespace bt {
 
 			ds += awt;
 		}
+
+		return ds;
 	}
 
 	int defendTillLost(const ApiIntelPlayer& attacker, const ApiIntelPlayer& defender, int ships) {
@@ -45,6 +47,8 @@ namespace bt {
 			if (ds <= awt) return as;
 			ds -= awt;
 		}
+
+		return as;
 	}
 
 	std::vector<int> sumUpRecursive(const std::vector<int>& numbers, int target, const std::vector<int>& partial, int margin) {

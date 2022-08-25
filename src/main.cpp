@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	auto& game = bt::BromTron::getGame();
-	game.setFPS(static_cast<float>(w->getMonitor().refreshRate));
+	game.setFPS(static_cast<unsigned int>(w->getMonitor().refreshRate));
 	game.setWindow(w);
 
 	game.init();
